@@ -1,5 +1,5 @@
 function errorHandler(error, req, res, next) {
-  console.log(error);
+  console.error(error);
   let message = "Internal Server Error";
   let status = 500;
 
@@ -15,7 +15,42 @@ function errorHandler(error, req, res, next) {
 
   if (error.name === "userNotFound") {
     message = "user not found";
+    status = 401;
+  }
+
+  if (error.name === "notFoundAuthorization") {
+    message = "Token Not Found";
+    status = 401;
+  }
+
+  if (error.name === "RoomNotFound") {
+    message = "Room Not Found";
+    status = 404;
+  }
+
+  if (error.name === "JsonWebTokenError") {
+    message = "Invalid token";
+    status = 401;
+  }
+  if (error.name === "TokenExpiredError") {
+    message = "Token expired";
+    status = 401;
+  }
+  if (error.name === "SequelizeUniqueConstraintError") {
+    message = error.errors[0].message;
+    status = 409;
+  }
+  if (error.name === "Forbidden") {
+    message = "Forbidden";
     status = 403;
+  }
+  if (error.name === "GameAlreadyStarted") {
+    message = "Game already started";
+    status = 400;
+  }
+  if (error.name === "SequelizeDatabaseError") {
+    message = "Database unavailable";
+    status = 503;
   }
 
   res.status(status).json({

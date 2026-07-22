@@ -1,0 +1,112 @@
+const express = require("express");
+const AuthController = require("../controllers/authController");
+const authentication = require("../middlewares/authentication");
+const router = express.Router();
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Daftar akun baru
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, password]
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: ByteHunter
+ *               password:
+ *                 type: string
+ *                 example: Password123
+ *     responses:
+ *       201:
+ *         description: Akun berhasil dibuat
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 username:
+ *                   type: string
+ *                   example: ByteHunter
+ *       400:
+ *         description: Input tidak valid
+ *       409:
+ *         description: Username sudah digunakan
+ */
+router.post("/api/auth/register", AuthController.register);
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login ke aplikasi
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, password]
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: ByteHunter
+ *               password:
+ *                 type: string
+ *                 example: Password123
+ *     responses:
+ *       200:
+ *         description: Login berhasil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 access_token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJCeXRlSHVudGVyIiwiaWF0IjoxNzIxNjUwODAwfQ.abc123xyz
+ *       400:
+ *         description: Username atau password kosong
+ *       401:
+ *         description: Kredensial tidak valid
+ */
+router.post("/api/auth/login", AuthController.login);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Dapatkan info user yang sedang login
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Info user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 username:
+ *                   type: string
+ *                   example: ByteHunter
+ *       401:
+ *         description: Token tidak valid
+ */
+router.get("/api/auth/me", authentication, AuthController.me);
+
+module.exports = router;

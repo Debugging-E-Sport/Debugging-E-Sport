@@ -9,7 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.Room, { foreignKey: "hostId" });
+      this.hasMany(models.Score, { foreignKey: "userId" });
+      this.belongsToMany(models.Room, {
+        through: models.RoomParticipants,
+        foreignKey: "userId",
+        as: "joinedRooms",
+      });
     }
   }
   User.init(
@@ -19,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: { msg: "username sudah terpakai" },
         validate: {
-          notEmpty: { msg: "username is required" },
           notEmpty: { msg: "username is required" },
           len: {
             args: [6, 30],
@@ -31,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: { msg: "password is required" },
           notEmpty: { msg: "password is required" },
         },
       },
