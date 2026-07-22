@@ -110,12 +110,12 @@ export default function SelectRolePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Host Option */}
-              <div className="transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(0,255,65,0.15)] rounded-2xl">
+              <div className="h-full transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(0,255,65,0.15)] rounded-2xl">
                 <HostRoomCard />
               </div>
 
               {/* Join Option */}
-              <div className="transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(157,78,221,0.15)] rounded-2xl">
+              <div className="h-full transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(157,78,221,0.15)] rounded-2xl">
                 <JoinRoomCard />
               </div>
             </div>
