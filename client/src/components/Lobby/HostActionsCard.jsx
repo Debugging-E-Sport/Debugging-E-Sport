@@ -1,4 +1,4 @@
-export default function HostActionsCard() {
+export default function HostActionsCard({ roomCode }) {
   return (
     <>
       {/* Start Button (Host only) */}
@@ -14,7 +14,7 @@ export default function HostActionsCard() {
         <button 
           className="start-btn w-full text-black font-mono font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 text-sm cursor-pointer"
           onClick={() => {
-            fetch('/api/rooms/BX-7291/start', {
+            fetch(`/api/rooms/${roomCode}/start`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${JSON.parse(localStorage.getItem('bugbrawl_auth') || '{}').token}`

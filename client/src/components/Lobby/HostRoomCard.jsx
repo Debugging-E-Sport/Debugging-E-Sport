@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router'
+import { useRoom } from '../../context/RoomContext'
 
 export default function HostRoomCard() {
-  const navigate = useNavigate()
+  const { createRoom, isLoading } = useRoom()
 
   return (
     <div className="bg-arena-panel border border-arena-purple/30 rounded-xl p-5 glow-purple flex flex-col h-full">
@@ -20,10 +20,16 @@ export default function HostRoomCard() {
       </div>
 
       <button 
-        onClick={() => navigate('/host')}
-        className="w-full bg-arena-purple hover:bg-arena-purpleLight text-white font-mono font-bold text-sm py-3 rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
+        onClick={createRoom}
+        disabled={isLoading}
+        className="w-full bg-arena-purple hover:bg-arena-purpleLight text-white font-mono font-bold text-sm py-3 rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <i className="fa-solid fa-plus text-xs"></i> CREATE ARENA
+        {isLoading ? (
+          <i className="fa-solid fa-spinner fa-spin text-xs"></i>
+        ) : (
+          <i className="fa-solid fa-plus text-xs"></i>
+        )}
+        {isLoading ? 'CREATING...' : 'CREATE ARENA'}
       </button>
     </div>
   )
