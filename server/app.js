@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require("cors");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -17,7 +17,8 @@ const io = new Server(server, {
 });
 
 // agar bisa di req.app.get("io")
-app.set("io", io);
+const game = io.of("/game");
+app.set("io", game);
 
 const router = require("./routers/index");
 
@@ -55,7 +56,7 @@ app.post("/api/rooms/:code/results", (req, res) => {
 app.use(errorHandler);
 
 // handle koneksi webSocket
-io.on("connection", (socket) => {
+game.on("connection", (socket) => {
   console.log(`⚡ A client connected with socket ID: ${socket.id}`);
 
   socket.on("game:join", (data) => {
