@@ -8,7 +8,11 @@ async function enableMocking() {
 
   const { worker } = await import('./mocks/browser.js')
   return worker.start({
-    onUnhandledRequest: 'bypass',
+    onUnhandledRequest(request, print) {
+      if (request.url.includes('/api')) {
+        print.warning()
+      }
+    },
   })
 }
 
