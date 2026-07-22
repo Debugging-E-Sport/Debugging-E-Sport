@@ -104,7 +104,51 @@ class RoomController {
       next(error);
     }
   }
-  // 4. POST /rooms/:code/start (Trigger game start - Khusus Host)
+  // 4. PATCH /rooms/:code/start (Trigger game start - Khusus Host)
+  static async startRoom(req, res, next) {
+    try {
+      const { code } = req.params;
+      const currentUserId = req.loginInfo?.id;
+
+      const room = await Room.findOne({ where: { code } });
+      if (!room) {
+        throw { name: "RoomNotFound" };
+      }
+
+      if (room.hostId !== currentUserId) {
+        throw {
+          name: "Forbidden",
+          message: "Access denied: Only the host can start the game.",
+        };
+      }
+
+      if (room.status === "playing") {
+        return res.status(200).json({
+          message: "Game is already in progress",
+          status: room.status,
+        });
+      }
+
+      await room.update({ status: "playing" });
+
+      const io = req.app.get("io");
+      if (io) {
+        io.to(code).emit("game:started", {
+          status: "playing",
+          message: "The host has started the game! Get ready.",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Game started successfully",
+        room_id: room.id,
+        code: room.code,
+        status: room.status,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = RoomController;

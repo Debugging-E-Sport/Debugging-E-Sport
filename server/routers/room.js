@@ -6,8 +6,6 @@ const router = express.Router();
 router.post("/api/rooms", authentication, RoomController.createRoom);
 router.get("/api/rooms/:code", RoomController.getRoomByCode);
 router.post("/api/rooms/:code/join", authentication, RoomController.joinRoom);
-router.post("/api/rooms/:code/start", (req, res) => {
-  res.send("Test Success");
-});
+router.patch("/rooms/:code/start", authentication, RoomController.startRoom);
 
 module.exports = router;

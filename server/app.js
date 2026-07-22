@@ -2,8 +2,22 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const cors = require("cors");
-
 const errorHandler = require("./middlewares/errorHandler");
+
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const server = createServer(app);
+
+// Inisialisasi Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+  },
+});
+
+// agar bisa di req.app.get("io")
+app.set("io", io);
 
 const router = require("./routers/index");
 
@@ -40,6 +54,21 @@ app.post("/api/rooms/:code/results", (req, res) => {
 // Middlewares ( Error Handler )
 app.use(errorHandler);
 
-app.listen(port, () => {
+// handle koneksi webSocket
+io.on("connection", (socket) => {
+  console.log(`⚡ A client connected with socket ID: ${socket.id}`);
+
+  socket.on("game:join", (data) => {
+    const { roomCode } = data;
+    socket.join(roomCode);
+    console.log(`Socket ${socket.id} joined room: ${roomCode}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`🔌 Client disconnected: ${socket.id}`);
+  });
+});
+
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
