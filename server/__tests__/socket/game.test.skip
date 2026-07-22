@@ -1,0 +1,98 @@
+const { createServer } = require("http")
+const { io: Client } = require("socket.io-client")
+const app = require("../../app")
+const { setupDB, teardownDB } = require("../helpers/db")
+
+let httpServer = null
+let httpServerAddr = null
+
+beforeAll((done) => {
+  httpServer = createServer(app)
+  httpServer.listen(() => {
+    const { port } = httpServer.address()
+    httpServerAddr = `http://localhost:${port}`
+    done()
+  })
+})
+
+afterAll(async () => {
+  if (httpServer) httpServer.close()
+  await teardownDB()
+})
+
+beforeAll(async () => {
+  await setupDB()
+})
+
+describe("Socket.IO — /game namespace", () => {
+  test("client connects to /game namespace", (done) => {
+    const socket = Client(`${httpServerAddr}/game`, {
+      transports: ["websocket"],
+      timeout: 5000,
+    })
+
+    socket.on("connect", () => {
+      expect(socket.connected).toBe(true)
+      socket.disconnect()
+      done()
+    })
+
+    socket.on("connect_error", (err) => {
+      done(err)
+    })
+  })
+
+  test("client can join a room via game:join", (done) => {
+    const socket = Client(`${httpServerAddr}/game`, {
+      transports: ["websocket"],
+      timeout: 5000,
+    })
+
+    socket.on("connect", () => {
+      socket.emit("game:join", { roomCode: "TEST01" })
+      socket.disconnect()
+      done()
+    })
+
+    socket.on("connect_error", (err) => {
+      done(err)
+    })
+  })
+
+  test("client receives game:started broadcast after starting room via REST", (done) => {
+    const request = require("supertest")
+    const socket = Client(`${httpServerAddr}/game`, {
+      transports: ["websocket"],
+      timeout: 5000,
+    })
+
+    socket.on("connect", () => {
+      socket.emit("game:join", { roomCode: "BROADCAST" })
+    })
+
+    socket.on("game:started", (data) => {
+      expect(data).toHaveProperty("status", "playing")
+      socket.disconnect()
+      done()
+    })
+
+    socket.on("connect_error", (err) => {
+      done(err)
+    })
+
+    setTimeout(async () => {
+      const credentials = { username: "broadcast_test", password: "pass" }
+      await request(app).post("/api/auth/register").send(credentials)
+      const login = await request(app).post("/api/auth/login").send(credentials)
+      const token = login.body.access_token
+
+      const room = await request(app)
+        .post("/api/rooms")
+        .set("Authorization", `Bearer ${token}`)
+
+      await request(app)
+        .post(`/api/rooms/${room.body.code}/start`)
+        .set("Authorization", `Bearer ${token}`)
+    }, 500)
+  }, 10000)
+})
