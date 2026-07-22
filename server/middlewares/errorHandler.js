@@ -23,14 +23,36 @@ function errorHandler(error, req, res, next) {
     status = 403;
   }
 
-  if (error.name === "userNotFound") {
-    message = "User Not Found";
-    status = 403;
-  }
-
   if (error.name === "RoomNotFound") {
     message = "Room Not Found";
     status = 403;
+  }
+
+  if (error.name === "JsonWebTokenError") {
+    message = "Invalid token";
+    status = 401;
+  }
+  if (error.name === "TokenExpiredError") {
+    message = "Token expired";
+    status = 401;
+  }
+  if (error.name === "SequelizeUniqueConstraintError") {
+    message = error.errors[0].message;
+    status = 409;
+  }
+  if (error.name === "Forbidden") {
+    message = "Forbidden";
+    status = 403;
+  }
+  if (error.name === "GameAlreadyStarted") {
+    message = "Game already started";
+    status = 400;
+  }
+
+  if (err.name === "SequelizeUniqueConstraintError") {
+    return res
+      .status(400)
+      .json({ message: "Room code collision detected, please try again." });
   }
 
   res.status(status).json({

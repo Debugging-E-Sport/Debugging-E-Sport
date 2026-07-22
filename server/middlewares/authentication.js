@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { verifyToken } = require("../helpers/jwt");
 const { User } = require("../models/index");
 
