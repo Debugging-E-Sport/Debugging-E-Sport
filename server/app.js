@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
 const errorHandler = require("./middlewares/errorHandler");
+const { sequelize } = require("./models");
 
 const { createServer } = require("http");
 const { Server } = require("socket.io");
@@ -52,6 +53,17 @@ game.on("connection", (socket) => {
   });
 });
 
-server.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+if (require.main === module) {
+  server.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+}
+
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received. Shutting down gracefully...");
+  await sequelize.close();
+  server.close();
+  process.exit(0);
 });
+
+module.exports = app;
