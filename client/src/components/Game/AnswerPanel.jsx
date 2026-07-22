@@ -10,6 +10,7 @@ export default function AnswerPanel() {
   const [activeTab, setActiveTab] = useState('answer') // 'answer' or 'explain'
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [code, setCode] = useState("for j in range(0, n-i-1):")
+  const [explanation, setExplanation] = useState("The inner loop range(0, n) causes an IndexError because when j reaches n-1, accessing arr[j+1] goes out of bounds. It should be range(0, n-i-1) to avoid comparing already-sorted elements.")
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -74,12 +75,21 @@ export default function AnswerPanel() {
             </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// explain the bug</label>
-              <textarea 
-                className="answer-area w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2.5 font-mono text-sm text-white placeholder-arena-muted resize-none focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all" 
-                rows="4" 
-                placeholder="Describe the bug and the fix..."
-                defaultValue="The inner loop range(0, n) causes an IndexError because when j reaches n-1, accessing arr[j+1] goes out of bounds. It should be range(0, n-i-1) to avoid comparing already-sorted elements."
-              ></textarea>
+              <div className="w-full bg-[#141414] border border-arena-border rounded-lg transition-all focus-within:border-arena-green focus-within:shadow-[0_0_15px_rgba(0,255,65,0.3)] overflow-hidden min-h-[100px]">
+                <Editor
+                  value={explanation}
+                  onValueChange={text => setExplanation(text)}
+                  highlight={text => text}
+                  padding={12}
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: 12,
+                    backgroundColor: 'transparent',
+                    minHeight: '100px'
+                  }}
+                  textareaClassName="focus:outline-none placeholder-arena-muted text-white"
+                />
+              </div>
             </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// fixed code (optional, +bonus pts)</label>
