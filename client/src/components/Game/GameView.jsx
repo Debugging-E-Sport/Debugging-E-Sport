@@ -19,8 +19,10 @@ export default function GameView({ roomCode, user }) {
             </div>
 
             {/* RIGHT COLUMN: Leaderboard & Stats */}
-            <div className="lg:col-span-4 flex flex-col gap-6 animate-[slideInRight_0.6s_ease-out]">
-              <LiveLeaderboard />
+            <div className="lg:col-span-4 relative">
+              <div className="flex flex-col gap-6 animate-[slideInRight_0.6s_ease-out] sticky top-8">
+                <LiveLeaderboard />
+              </div>
             </div>
           </div>
         </ErrorBoundary>
