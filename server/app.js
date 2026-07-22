@@ -67,3 +67,4 @@ process.on("SIGTERM", async () => {
 });
 
 module.exports = app;
+app.server = server;
