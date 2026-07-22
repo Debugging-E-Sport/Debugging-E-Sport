@@ -16,6 +16,10 @@
   --background-image-gradient-cta: linear-gradient(90deg, #7c3aed 0%, #00ff41 100%);
 }
 
+html, body, #root {
+  height: 100%;
+}
+
 body {
   background-color: var(--color-arena-bg);
 }
