@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Room, { foreignKey: "hostId" });
       this.hasMany(models.Score, { foreignKey: "userId" });
       this.belongsToMany(models.Room, {
-        through: models.RoomParticipant,
+        through: models.RoomParticipants,
         foreignKey: "userId",
         as: "joinedRooms",
       });

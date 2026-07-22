@@ -12,9 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, { foreignKey: "hostId", as: "host" });
       this.hasMany(models.Score, { foreignKey: "roomId" });
       this.belongsToMany(models.User, {
-        through: models.RoomParticipant,
+        through: models.RoomParticipants,
         foreignKey: "roomId",
-        as: "players", // Alias ini yang akan kita panggil untuk mengambil array players!
+        as: "players",
       });
     }
   }
@@ -36,9 +36,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       hooks: {
-        beforeCreate: (user, options) => {
-          if (!user.code) {
-            user.code = generateUniqueCode();
+        beforeCreate: (room, options) => {
+          if (!room.code) {
+            room.code = generateUniqueCode();
           }
         },
       },
