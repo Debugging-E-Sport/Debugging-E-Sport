@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isCheckingAuth && isAuthenticated) {
-      navigate('/lobby', { replace: true })
+      navigate('/select/role', { replace: true })
     }
   }, [isAuthenticated, isCheckingAuth, navigate])
 
