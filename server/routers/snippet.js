@@ -18,14 +18,24 @@ const router = express.Router();
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 title:
  *                   type: string
+ *                   example: Type Coercion in Addition
  *                 context:
  *                   type: string
+ *                   example: Fungsi ini seharusnya menghitung total dari dua angka dan menampilkan hasilnya.
  *                 code:
  *                   type: string
+ *                   example: |
+ *                     function add(a, b) {
+ *                       return a + b
+ *                     }
+ *                     const total = add(5, "10")
+ *                     console.log("Total:", total)
  *                 max_score:
  *                   type: integer
+ *                   example: 100
  *       404:
  *         description: Tidak ada snippet tersedia
  */
@@ -43,6 +53,7 @@ router.get("/api/snippets/random", SnippetsController.getRandomSnippet);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *         description: Detail snippet
@@ -53,14 +64,24 @@ router.get("/api/snippets/random", SnippetsController.getRandomSnippet);
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 title:
  *                   type: string
+ *                   example: Type Coercion in Addition
  *                 context:
  *                   type: string
+ *                   example: Fungsi ini seharusnya menghitung total dari dua angka dan menampilkan hasilnya.
  *                 code:
  *                   type: string
+ *                   example: |
+ *                     function add(a, b) {
+ *                       return a + b
+ *                     }
+ *                     const total = add(5, "10")
+ *                     console.log("Total:", total)
  *                 max_score:
  *                   type: integer
+ *                   example: 100
  *       400:
  *         description: ID tidak valid
  *       404:
@@ -86,8 +107,10 @@ router.get("/api/snippets/:id", SnippetsController.getSnippetById);
  *                 properties:
  *                   id:
  *                     type: integer
+ *                     example: 1
  *                   title:
  *                     type: string
+ *                     example: Type Coercion in Addition
  */
 router.get("/api/snippets", SnippetsController.getAllSnippets);
 

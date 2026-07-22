@@ -1,18 +1,3 @@
-/**
- * @swagger
- * components:
- *   schemas:
- *     Auth:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         username:
- *           type: string
- *         access_token:
- *           type: string
- */
-
 const express = require("express");
 const AuthController = require("../controllers/authController");
 const authentication = require("../middlewares/authentication");
@@ -34,8 +19,10 @@ const router = express.Router();
  *             properties:
  *               username:
  *                 type: string
+ *                 example: ByteHunter
  *               password:
  *                 type: string
+ *                 example: Password123
  *     responses:
  *       201:
  *         description: Akun berhasil dibuat
@@ -46,8 +33,10 @@ const router = express.Router();
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 username:
  *                   type: string
+ *                   example: ByteHunter
  *       400:
  *         description: Input tidak valid
  *       409:
@@ -71,8 +60,10 @@ router.post("/api/auth/register", AuthController.register);
  *             properties:
  *               username:
  *                 type: string
+ *                 example: ByteHunter
  *               password:
  *                 type: string
+ *                 example: Password123
  *     responses:
  *       200:
  *         description: Login berhasil
@@ -83,10 +74,10 @@ router.post("/api/auth/register", AuthController.register);
  *               properties:
  *                 access_token:
  *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGljZSIsImlhdCI6MTcyMTY1MDgwMH0.abc123
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJCeXRlSHVudGVyIiwiaWF0IjoxNzIxNjUwODAwfQ.abc123xyz
  *       400:
  *         description: Username atau password kosong
- *       403:
+ *       401:
  *         description: Kredensial tidak valid
  */
 router.post("/api/auth/login", AuthController.login);
@@ -109,12 +100,12 @@ router.post("/api/auth/login", AuthController.login);
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 username:
  *                   type: string
+ *                   example: ByteHunter
  *       401:
  *         description: Token tidak valid
- *       403:
- *         description: Token tidak ditemukan
  */
 router.get("/api/auth/me", authentication, AuthController.me);
 

@@ -2,29 +2,38 @@
  * @swagger
  * components:
  *   schemas:
+ *     Player:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         username:
+ *           type: string
+ *           example: ByteHunter
  *     Room:
  *       type: object
  *       properties:
  *         id:
  *           type: integer
+ *           example: 1
  *         code:
  *           type: string
+ *           example: BX7291
  *         host_id:
  *           type: integer
+ *           example: 1
  *         status:
  *           type: string
+ *           example: waiting
  *         created_at:
  *           type: string
  *           format: date-time
+ *           example: "2026-07-23T04:00:00.000Z"
  *         players:
  *           type: array
  *           items:
- *             type: object
- *             properties:
- *               id:
- *                 type: integer
- *               username:
- *                 type: string
+ *             $ref: '#/components/schemas/Player'
  */
 
 const express = require("express");
@@ -50,18 +59,21 @@ const router = express.Router();
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 code:
  *                   type: string
+ *                   example: BX7291
  *                 host_id:
  *                   type: integer
+ *                   example: 1
  *                 status:
  *                   type: string
+ *                   example: waiting
  *                 created_at:
  *                   type: string
+ *                   example: "2026-07-23T04:00:00.000Z"
  *       401:
  *         description: Token tidak valid
- *       403:
- *         description: Token tidak ditemukan
  */
 router.post("/api/rooms", authentication, RoomController.createRoom);
 
@@ -77,6 +89,7 @@ router.post("/api/rooms", authentication, RoomController.createRoom);
  *         required: true
  *         schema:
  *           type: string
+ *           example: BX7291
  *         description: 6-char room code
  *     responses:
  *       200:
@@ -84,8 +97,28 @@ router.post("/api/rooms", authentication, RoomController.createRoom);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Room'
- *       403:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 code:
+ *                   type: string
+ *                   example: BX7291
+ *                 host_id:
+ *                   type: integer
+ *                   example: 1
+ *                 status:
+ *                   type: string
+ *                   example: waiting
+ *                 players:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Player'
+ *                 created_at:
+ *                   type: string
+ *                   example: "2026-07-23T04:00:00.000Z"
+ *       404:
  *         description: Room tidak ditemukan
  */
 router.get("/api/rooms/:code", RoomController.getRoomByCode);
@@ -104,6 +137,7 @@ router.get("/api/rooms/:code", RoomController.getRoomByCode);
  *         required: true
  *         schema:
  *           type: string
+ *           example: BX7291
  *     responses:
  *       200:
  *         description: Berhasil gabung
@@ -114,15 +148,19 @@ router.get("/api/rooms/:code", RoomController.getRoomByCode);
  *               properties:
  *                 room_id:
  *                   type: integer
+ *                   example: 1
  *                 code:
  *                   type: string
+ *                   example: BX7291
  *                 players:
  *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Player'
  *       400:
  *         description: Game sudah dimulai
  *       401:
  *         description: Token tidak valid
- *       403:
+ *       404:
  *         description: Room tidak ditemukan
  */
 router.post("/api/rooms/:code/join", authentication, RoomController.joinRoom);
@@ -141,6 +179,7 @@ router.post("/api/rooms/:code/join", authentication, RoomController.joinRoom);
  *         required: true
  *         schema:
  *           type: string
+ *           example: BX7291
  *     responses:
  *       200:
  *         description: Game dimulai
@@ -164,7 +203,7 @@ router.post("/api/rooms/:code/join", authentication, RoomController.joinRoom);
  *       400:
  *         description: Game sudah berjalan
  *       403:
- *         description: Bukan host atau room tidak ditemukan
+ *         description: Bukan host
  */
 router.post("/api/rooms/:code/start", authentication, RoomController.startRoom);
 
