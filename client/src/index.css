@@ -1,1 +1,111 @@
 @import "tailwindcss";
+
+@theme {
+  --color-arena-bg: #0d1117;
+  --color-arena-panel: #161b22;
+  --color-arena-border: #30363d;
+  --color-arena-text: #c9d1d9;
+  --color-arena-muted: #8b949e;
+  --color-arena-green: #00ff41;
+  --color-arena-greenDim: #2ea043;
+  --color-arena-purple: #7c3aed;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: '"JetBrains Mono"', monospace;
+
+  --background-image-gradient-cta: linear-gradient(90deg, #7c3aed 0%, #00ff41 100%);
+}
+
+body {
+  background-color: var(--color-arena-bg);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-arena-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-arena-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-arena-muted);
+}
+
+.code-rain span {
+  position: absolute;
+  font-family: var(--font-mono);
+  color: var(--color-arena-green);
+  opacity: 0;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  10% {
+    opacity: .55;
+  }
+  80% {
+    opacity: .55;
+  }
+  100% {
+    transform: translateY(1024px);
+    opacity: 0;
+  }
+}
+
+.live-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  background: var(--color-arena-green);
+  opacity: .5;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: .5;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.blink-cursor::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: var(--color-arena-green);
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.tab-active {
+  color: var(--color-arena-green);
+  border-bottom: 2px solid var(--color-arena-green);
+}
+
+.role-active {
+  background: var(--color-arena-panel);
+  color: var(--color-arena-green);
+  border-color: var(--color-arena-green);
+}
