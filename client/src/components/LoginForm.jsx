@@ -50,8 +50,7 @@ export default function LoginForm({ onSubmit, isLoading, error }) {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#00ff41] transition-colors"
-            >
-              <i className={`fa-${showPassword ? 'solid' : 'regular'} fa-eye text-sm`} />
+            >            
             </button>
           </div>
         </div>
