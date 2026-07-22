@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 export default function PlayerList() {
   const players = [
     { id: 1, name: 'ByteHunter', role: 'HOST', avatar: 'avatar-2.jpg', level: 42, pts: 3204, status: 'READY' },
@@ -7,6 +9,17 @@ export default function PlayerList() {
     { id: 5, name: 'StackSmith', role: 'PLAYER', avatar: 'avatar-4.jpg', level: 24, pts: 1320, status: 'WAIT' },
     { id: 6, name: 'RecursiveRey', role: 'PLAYER', avatar: 'avatar-7.jpg', level: 31, pts: 1780, status: 'READY' },
   ]
+
+  const quotes = useMemo(() => [
+    '"It’s not a bug, it’s an undocumented feature."',
+    '"First, solve the problem. Then, write the code." – John Johnson',
+    '"Code is like humor. When you have to explain it, it’s bad." – Cory House',
+    '"Fix the cause, not the symptom." – Steve Maguire',
+    '"Make it work, make it right, make it fast." – Kent Beck',
+    '"Simplicity is the soul of efficiency." – Austin Freeman'
+  ], [])
+  
+  const randomQuote = useMemo(() => quotes[Math.floor(Math.random() * quotes.length)], [quotes])
 
   return (
     <div id="pane-participants" className="p-5">
@@ -34,13 +47,15 @@ export default function PlayerList() {
           </div>
         ))}
         {/* Animated Empty Slots (Scanner Card) */}
-        <div className="relative flex items-center justify-center gap-3 bg-arena-bg/40 border border-arena-border/60 rounded-lg p-3 h-[72px] overflow-hidden group shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
+        <div className="col-span-1 sm:col-span-2 relative flex items-center justify-center gap-4 bg-arena-bg/40 border border-arena-border/60 rounded-lg p-4 h-[72px] overflow-hidden group shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
           {/* Efek radar berjalan */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-arena-green/15 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
           <div className="w-10 h-10 rounded-full border border-arena-green/40 border-dashed flex items-center justify-center relative z-10 animate-[spin_4s_linear_infinite] shadow-[0_0_10px_rgba(0,255,65,0.2)]">
-            <i className="fa-solid fa-crosshairs text-arena-green text-sm"></i>
+            <i className="fa-solid fa-code text-arena-green text-sm"></i>
           </div>
-          <span className="font-mono text-xs text-arena-green relative z-10 animate-pulse tracking-widest">SEARCHING_FOR_CHALLENGERS...</span>
+          <span className="font-mono text-sm text-arena-green relative z-10 animate-pulse tracking-wide italic">
+            {randomQuote}
+          </span>
         </div>
       </div>
       
