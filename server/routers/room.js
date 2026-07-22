@@ -151,8 +151,16 @@ router.post("/api/rooms/:code/join", authentication, RoomController.joinRoom);
  *               properties:
  *                 status:
  *                   type: string
+ *                   example: playing
  *                 started_at:
  *                   type: string
+ *                   example: "2026-07-23T04:01:00.000Z"
+ *                 room_id:
+ *                   type: integer
+ *                   example: 1
+ *                 code:
+ *                   type: string
+ *                   example: BX7291
  *       400:
  *         description: Game sudah berjalan
  *       403:

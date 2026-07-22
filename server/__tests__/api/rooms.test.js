@@ -19,7 +19,9 @@ describe("Rooms API", () => {
     bobToken = bobRes.body.access_token
   })
 
-  afterAll(async () => {})
+  afterAll(async () => {
+    await teardownDB()
+  })
 
   test("POST /api/rooms — creates room and auto-joins host as player", async () => {
     const res = await request(app)
@@ -36,11 +38,11 @@ describe("Rooms API", () => {
     roomCode = res.body.code
   })
 
-  test("POST /api/rooms — without auth returns 403", async () => {
+  test("POST /api/rooms — without auth returns 401", async () => {
     const res = await request(app)
       .post("/api/rooms")
 
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(401)
   })
 
   test("GET /api/rooms/:code — returns room info with host in players list", async () => {
@@ -120,10 +122,10 @@ describe("Rooms API", () => {
     expect(res.status).toBe(403)
   })
 
-  test("GET /api/rooms/:code — invalid code returns 403", async () => {
+  test("GET /api/rooms/:code — invalid code returns 404", async () => {
     const res = await request(app).get("/api/rooms/ZZZZZZ")
 
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(404)
     expect(res.body.message).toMatch(/not found/i)
   })
 })

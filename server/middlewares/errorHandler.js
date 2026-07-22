@@ -1,5 +1,5 @@
 function errorHandler(error, req, res, next) {
-  console.log(error);
+  console.error(error);
   let message = "Internal Server Error";
   let status = 500;
 
@@ -15,17 +15,17 @@ function errorHandler(error, req, res, next) {
 
   if (error.name === "userNotFound") {
     message = "user not found";
-    status = 403;
+    status = 401;
   }
 
   if (error.name === "notFoundAuthorization") {
     message = "Token Not Found";
-    status = 403;
+    status = 401;
   }
 
   if (error.name === "RoomNotFound") {
     message = "Room Not Found";
-    status = 403;
+    status = 404;
   }
 
   if (error.name === "JsonWebTokenError") {

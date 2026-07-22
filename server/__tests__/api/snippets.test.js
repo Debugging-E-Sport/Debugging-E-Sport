@@ -7,7 +7,9 @@ describe("Snippets API", () => {
     await setupDB()
   })
 
-  afterAll(async () => {})
+  afterAll(async () => {
+    await teardownDB()
+  })
 
   test("GET /api/snippets/random — returns snippet without bugDescriptions", async () => {
     const res = await request(app).get("/api/snippets/random")

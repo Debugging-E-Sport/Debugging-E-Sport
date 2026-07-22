@@ -10,7 +10,9 @@ describe("Auth API", () => {
     await setupDB()
   })
 
-  afterAll(async () => {})
+  afterAll(async () => {
+    await teardownDB()
+  })
 
   test("POST /api/auth/register — returns 201 with id and username", async () => {
     const res = await request(app)
@@ -49,12 +51,12 @@ describe("Auth API", () => {
     token = res.body.access_token
   })
 
-  test("POST /api/auth/login — wrong password returns 403", async () => {
+  test("POST /api/auth/login — wrong password returns 401", async () => {
     const res = await request(app)
       .post("/api/auth/login")
       .send({ username: credentials.username, password: "wrong" })
 
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(401)
   })
 
   test("GET /api/auth/me — with token returns id and username", async () => {
@@ -67,10 +69,10 @@ describe("Auth API", () => {
     expect(res.body).toHaveProperty("username", credentials.username)
   })
 
-  test("GET /api/auth/me — without token returns 403", async () => {
+  test("GET /api/auth/me — without token returns 401", async () => {
     const res = await request(app)
       .get("/api/auth/me")
 
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(401)
   })
 })

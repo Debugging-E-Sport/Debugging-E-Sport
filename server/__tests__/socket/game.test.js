@@ -5,21 +5,15 @@ const { setupDB, teardownDB } = require("../helpers/db")
 const httpServer = app.server
 let httpServerAddr = null
 
-beforeAll((done) => {
-  httpServer.listen(() => {
-    const { port } = httpServer.address()
-    httpServerAddr = `http://localhost:${port}`
-    done()
-  })
-})
-
-afterAll(async () => {
-  if (httpServer) httpServer.close()
-  await teardownDB()
-})
-
 beforeAll(async () => {
   await setupDB()
+  await new Promise((resolve) => {
+    httpServer.listen(() => {
+      const { port } = httpServer.address()
+      httpServerAddr = `http://localhost:${port}`
+      resolve()
+    })
+  })
 })
 
 describe("Socket.IO — /game namespace", () => {

@@ -53,7 +53,6 @@ module.exports = {
       },
       feedback: {
         type: Sequelize.TEXT,
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,

@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
         unique: { msg: "username sudah terpakai" },
         validate: {
           notEmpty: { msg: "username is required" },
-          notEmpty: { msg: "username is required" },
           len: {
             args: [6, 30],
             msg: "username must be more than 5 characters",
@@ -37,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: { msg: "password is required" },
           notEmpty: { msg: "password is required" },
         },
       },

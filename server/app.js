@@ -1,7 +1,10 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
+const path = require("path");
 const errorHandler = require("./middlewares/errorHandler");
 const { sequelize } = require("./models");
 const swaggerUi = require("swagger-ui-express");
@@ -26,7 +29,7 @@ const swaggerSpec = swaggerJsdoc({
       },
     },
   },
-  apis: ["./routers/*.js"],
+  apis: [path.join(__dirname, "routers", "*.js")],
 });
 
 const { createServer } = require("http");
@@ -86,12 +89,19 @@ game.on("connection", (socket) => {
 
 if (require.main === module) {
   server.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Bug Brawl server listening on port ${port}`);
   });
 }
 
 process.on("SIGTERM", async () => {
   console.log("SIGTERM received. Shutting down gracefully...");
+  await sequelize.close();
+  server.close();
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  console.log("SIGINT received. Shutting down gracefully...");
   await sequelize.close();
   server.close();
   process.exit(0);
