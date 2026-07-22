@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router'
 
 export default function GameHeader({ roomCode, user }) {
   const [timeLeft, setTimeLeft] = useState(67) // mock time
@@ -34,12 +35,15 @@ export default function GameHeader({ roomCode, user }) {
       <div className="max-w-[1440px] mx-auto px-4 py-2.5 flex items-center gap-4">
         
         {/* Brand */}
-        <div className="flex items-center gap-2 mr-2">
-          <span className="font-mono text-arena-green">⌘</span>
-          <span className="font-mono font-bold text-white text-sm">
+        <Link 
+          to="/select/role" 
+          className="flex items-center gap-2 mr-2 group hover:opacity-80 transition-opacity cursor-pointer"
+        >
+          <span className="font-mono text-arena-green text-lg group-hover:drop-shadow-[0_0_8px_rgba(0,255,65,0.8)] transition-all">⌘</span>
+          <span className="font-mono font-bold text-white text-sm tracking-tight">
             bugbrawl<span className="text-arena-muted">.sh</span>
           </span>
-        </div>
+        </Link>
 
         {/* Round indicator */}
         <div className="flex items-center gap-2 bg-arena-panel border border-arena-border rounded-lg px-3 py-1.5 hidden md:flex">
@@ -90,19 +94,23 @@ export default function GameHeader({ roomCode, user }) {
 
         <div className="flex-1"></div>
 
-        {/* Difficulty + room */}
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-xs px-2 py-1 rounded-full hidden lg:inline-block difficulty-badge medium">MEDIUM</span>
-          <div className="flex items-center gap-2 font-mono text-xs text-arena-green">
-            <span className="relative inline-flex h-2 w-2">
+        {/* Room & User */}
+        <div className="flex items-center gap-5">
+          {/* Room Code */}
+          <div className="flex items-center gap-2 font-mono text-xs text-arena-green bg-arena-green/5 border border-arena-green/20 px-3 py-1.5 rounded-lg shadow-[inset_0_0_8px_rgba(0,255,65,0.1)]">
+            <span className="relative inline-flex h-2 w-2 mr-1">
               <span className="live-dot absolute"></span>
               <span className="relative inline-block h-2 w-2 rounded-full bg-arena-green"></span>
             </span>
             {roomCode}
           </div>
+          
           {/* User */}
-          <div className="w-8 h-8 rounded-full border border-arena-border bg-arena-panel flex items-center justify-center text-xs font-bold text-white uppercase">
-            {user?.username?.charAt(0) || '?'}
+          <div className="hidden md:flex items-center gap-3 border-l border-arena-border pl-5">
+            <div className="w-8 h-8 rounded-full border border-arena-border bg-arena-panel flex flex-shrink-0 items-center justify-center font-mono font-bold text-arena-green text-sm">
+              {user?.username ? user.username.charAt(0).toUpperCase() : '?'}
+            </div>
+            <span className="font-mono text-sm text-white">{user?.username || 'Guest'}</span>
           </div>
         </div>
       </div>
