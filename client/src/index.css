@@ -3,12 +3,14 @@
 @theme {
   --color-arena-bg: #0d1117;
   --color-arena-panel: #161b22;
+  --color-arena-panel2: #1c2128;
   --color-arena-border: #30363d;
   --color-arena-text: #c9d1d9;
   --color-arena-muted: #8b949e;
   --color-arena-green: #00ff41;
   --color-arena-greenDim: #2ea043;
   --color-arena-purple: #7c3aed;
+  --color-arena-purpleLight: #a78bfa;
 
   --font-sans: 'Inter', sans-serif;
   --font-mono: '"JetBrains Mono"', monospace;
@@ -112,4 +114,89 @@ body {
   background: var(--color-arena-panel);
   color: var(--color-arena-green);
   border-color: var(--color-arena-green);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+.badge-glow {
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+}
+
+.grid-bg {
+  background-image: linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.participant-enter {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+      opacity: 0;
+      transform: translateX(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateX(0);
+  }
+}
+
+.copy-btn:hover {
+  color: var(--color-arena-green);
+}
+
+.difficulty-badge.easy {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.difficulty-badge.medium {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.difficulty-badge.hard {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.ready-badge {
+  background: rgba(0, 255, 65, 0.1);
+  color: var(--color-arena-green);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.waiting-badge {
+  background: rgba(139, 148, 158, 0.1);
+  color: var(--color-arena-muted);
+  border: 1px solid rgba(139, 148, 158, 0.2);
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #7c3aed 0%, #00ff41 100%);
+  transition: all 0.2s;
+}
+
+.start-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 255, 65, 0.3);
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
