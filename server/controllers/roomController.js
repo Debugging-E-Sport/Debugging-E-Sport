@@ -1,21 +1,27 @@
 const generateUniqueCode = require("../helpers/codeRandom");
-const { Room, User, RoomParticipants } = require("../models/index");
+const { Room, User, RoomParticipants, sequelize } = require("../models/index");
 
 class RoomController {
   // 1. POST /rooms (Membuat room baru)
   static async createRoom(req, res, next) {
+    const t = await sequelize.transaction();
     try {
       const hostId = req.loginInfo.id;
 
-      const code = generateUniqueCode();
+      const code = await generateUniqueCode();
 
       const newRoom = await Room.create({
         hostId,
         code,
         status: "waiting",
-      });
+      }, { transaction: t });
 
-      await RoomParticipants.create({ roomId: newRoom.id, userId: hostId });
+      await RoomParticipants.create({
+        roomId: newRoom.id,
+        userId: hostId,
+      }, { transaction: t });
+
+      await t.commit();
 
       return res.status(201).json({
         id: newRoom.id,
@@ -25,6 +31,7 @@ class RoomController {
         created_at: newRoom.createdAt,
       });
     } catch (err) {
+      await t.rollback();
       next(err);
     }
   }

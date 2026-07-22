@@ -12,7 +12,7 @@ const authentication = async (req, res, next) => {
 
     const payload = verifyToken(token);
 
-    const user = await User.findOne({ where: { username: payload.username } });
+    const user = await User.findByPk(payload.id);
     if (!user) {
       throw { name: "userNotFound" };
     }

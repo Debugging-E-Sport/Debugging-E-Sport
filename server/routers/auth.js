@@ -6,7 +6,6 @@ const router = express.Router();
 router.post("/api/auth/login", AuthController.login);
 router.post("/api/auth/register", AuthController.register);
 
-router.use(authentication);
-router.get("/api/auth/me", AuthController.me);
+router.get("/api/auth/me", authentication, AuthController.me);
 
 module.exports = router;

@@ -9,7 +9,8 @@ class AuthController {
       const user = await User.create({ username, password });
 
       res.status(201).json({
-        message: "Account has been created successfully",
+        id: user.id,
+        username: user.username,
       });
     } catch (error) {
       next(error);
@@ -41,7 +42,6 @@ class AuthController {
   static async me(req, res, next) {
     try {
       const user = req.loginInfo;
-      console.log(user);
 
       res.status(200).json(user);
     } catch (error) {

@@ -30,7 +30,11 @@ class SnippetsController {
     try {
       const { id } = req.params;
 
-      const snippet = await Snippet.findByPk(id, {
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid snippet ID" });
+      }
+
+      const snippet = await Snippet.findByPk(Number(id), {
         attributes: ["id", "title", "context", "code", "maxScore"],
       });
 

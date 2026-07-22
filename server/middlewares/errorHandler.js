@@ -48,6 +48,10 @@ function errorHandler(error, req, res, next) {
     message = "Game already started";
     status = 400;
   }
+  if (error.name === "SequelizeDatabaseError") {
+    message = "Database unavailable";
+    status = 503;
+  }
 
   res.status(status).json({
     message,
