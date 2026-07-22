@@ -15,6 +15,8 @@ class RoomController {
         status: "waiting",
       });
 
+      await RoomParticipants.create({ roomId: newRoom.id, userId: hostId });
+
       return res.status(201).json({
         id: newRoom.id,
         code: newRoom.code,
@@ -36,6 +38,10 @@ class RoomController {
       const room = await Room.findOne({ where: { code } });
       if (!room) {
         throw { name: "RoomNotFound" };
+      }
+
+      if (room.status !== "waiting") {
+        throw { name: "GameAlreadyStarted" };
       }
 
       await RoomParticipants.findOrCreate({
@@ -140,10 +146,10 @@ class RoomController {
       }
 
       return res.status(200).json({
-        message: "Game started successfully",
+        status: room.status,
+        started_at: room.updatedAt,
         room_id: room.id,
         code: room.code,
-        status: room.status,
       });
     } catch (error) {
       next(error);
