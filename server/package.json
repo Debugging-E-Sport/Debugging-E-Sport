@@ -5,7 +5,12 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "prestart": "npx sequelize-cli db:migrate",
+    "dev": "node app.js",
     "test": "jest --forceExit --detectOpenHandles"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [],
   "author": "",
