@@ -275,4 +275,37 @@ body {
 }
 @keyframes ldPulse { 0%,100%{transform:scale(1);opacity:.4} 50%{transform:scale(1.8);opacity:0} }
 
-.hint-used { opacity: 0.4; pointer-events: none; }
+.hint-used { opacity: 0.4; pointer-events: none; }
+
+/* Custom Submit Button styling */
+.submit-btn {
+  background: linear-gradient(135deg, #00ff41 0%, #2ea043 100%);
+  color: #000;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 255, 65, 0.5);
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-20deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
+}

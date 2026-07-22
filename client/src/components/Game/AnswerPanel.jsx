@@ -79,7 +79,7 @@ export default function AnswerPanel() {
                 <Editor
                   value={explanation}
                   onValueChange={text => setExplanation(text)}
-                  highlight={text => text}
+                  highlight={code => Prism.highlight(code, Prism.languages.python, 'python')}
                   padding={12}
                   style={{
                     fontFamily: '"JetBrains Mono", monospace',
@@ -112,7 +112,7 @@ export default function AnswerPanel() {
             {/* Submit */}
             <button 
               type="submit"
-              className="submit-btn w-full text-black font-mono font-bold text-sm py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01] shadow-[0_0_15px_rgba(0,255,65,0.2)] hover:shadow-[0_0_25px_rgba(0,255,65,0.6)] animate-[pulse_3s_infinite]"
+              className="submit-btn w-full font-mono font-extrabold text-sm py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               <i className="fa-solid fa-paper-plane text-xs"></i> SUBMIT ANSWER
             </button>
