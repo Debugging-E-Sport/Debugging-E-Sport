@@ -45,27 +45,14 @@ export const roomHandlers = [
     return HttpResponse.json(room)
   }),
 
-  http.post('/api/rooms/:code/start', async ({ request, params }) => {
-    const authHeader = request.headers.get('Authorization')
-    if (!authHeader) {
-      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const user = await verifyToken(authHeader)
-    if (!user) {
-      return HttpResponse.json({ error: 'Invalid token' }, { status: 401 })
-    }
-
-    const room = getRoom(params.code)
-    if (!room) {
-      return HttpResponse.json({ error: 'Room not found' }, { status: 404 })
-    }
-
-    if (room.host_id !== user.userId) {
-      return HttpResponse.json({ error: 'Only host can start the game' }, { status: 403 })
-    }
-
-    const updated = startRoom(params.code)
-    return HttpResponse.json(updated)
+  http.post('/api/rooms/:code/start', async ({ request }) => {
+    // Proxy ke mock-server/socket.js HTTP endpoint agar socket state terupdate!
+    const url = new URL(request.url)
+    url.port = '3000'
+    url.hostname = 'localhost'
+    return fetch(url.toString(), {
+      method: request.method,
+      headers: request.headers,
+    })
   }),
 ]

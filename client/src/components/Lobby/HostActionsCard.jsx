@@ -11,7 +11,17 @@ export default function HostActionsCard() {
         <div className="w-full bg-arena-bg rounded-full h-1.5 mb-4">
           <div className="bg-arena-green h-1.5 rounded-full transition-all" style={{ width: '66%' }}></div>
         </div>
-        <button className="start-btn w-full text-black font-mono font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 text-sm cursor-pointer">
+        <button 
+          className="start-btn w-full text-black font-mono font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 text-sm cursor-pointer"
+          onClick={() => {
+            fetch('/api/rooms/BX-7291/start', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('bugbrawl_auth') || '{}').token}`
+              }
+            }).catch(console.error)
+          }}
+        >
           <i className="fa-solid fa-rocket text-xs"></i> START GAME
         </button>
         <p className="font-mono text-xs text-arena-muted text-center mt-2">4/6 players ready · Can start now</p>
