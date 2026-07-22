@@ -7,6 +7,7 @@ import RoomHeader from '../components/Lobby/RoomHeader'
 import LobbyTabs from '../components/Lobby/LobbyTabs'
 import GameSummaryCard from '../components/Lobby/GameSummaryCard'
 import HostActionsCard from '../components/Lobby/HostActionsCard'
+import GameView from '../components/Game/GameView'
 
 export default function ArenaLobbyPage() {
   const { code } = useParams()
@@ -31,6 +32,10 @@ export default function ArenaLobbyPage() {
   }
 
   const isHost = user?.id === currentRoom.host_id
+
+  if (currentRoom.status === 'playing') {
+    return <GameView roomCode={currentRoom.code} user={user} />
+  }
 
   return (
     <div className="text-arena-text min-h-screen grid-bg">
