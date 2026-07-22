@@ -1,8 +1,13 @@
 import { useState } from 'react'
+import Editor from 'react-simple-code-editor'
+import Prism from 'prismjs'
+import 'prismjs/components/prism-python'
+import 'prismjs/themes/prism-twilight.css' // Dark theme that fits well
 
 export default function AnswerPanel() {
   const [activeTab, setActiveTab] = useState('answer') // 'answer' or 'explain'
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [code, setCode] = useState("for j in range(0, n-i-1):")
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -76,12 +81,20 @@ export default function AnswerPanel() {
             </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// fixed code (optional, +bonus pts)</label>
-              <textarea 
-                className="answer-area w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2.5 font-mono text-xs text-white placeholder-arena-muted resize-none transition-all" 
-                rows="3" 
-                placeholder="for j in range(0, n-i-1):"
-                defaultValue="for j in range(0, n-i-1):"
-              ></textarea>
+              <div className="w-full bg-[#141414] border border-arena-border rounded-lg transition-all focus-within:border-arena-green focus-within:shadow-[0_0_0_3px_rgba(0,255,65,0.1)] overflow-hidden">
+                <Editor
+                  value={code}
+                  onValueChange={code => setCode(code)}
+                  highlight={code => Prism.highlight(code, Prism.languages.python, 'python')}
+                  padding={12}
+                  style={{
+                    fontFamily: '"JetBrains Mono", monospace',
+                    fontSize: 12,
+                    backgroundColor: 'transparent',
+                  }}
+                  textareaClassName="focus:outline-none placeholder-arena-muted text-white"
+                />
+              </div>
             </div>
 
             {/* Submit */}
