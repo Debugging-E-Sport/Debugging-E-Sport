@@ -1,4 +1,7 @@
+import { useRoom } from '../../context/RoomContext'
+
 export default function HostActionsCard({ roomCode }) {
+  const { fetchRoom } = useRoom()
   return (
     <>
       {/* Start Button (Host only) */}
@@ -19,6 +22,8 @@ export default function HostActionsCard({ roomCode }) {
               headers: {
                 'Authorization': `Bearer ${JSON.parse(localStorage.getItem('bugbrawl_auth') || '{}').token}`
               }
+            }).then(() => {
+              fetchRoom(roomCode)
             }).catch(console.error)
           }}
         >

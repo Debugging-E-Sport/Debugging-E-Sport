@@ -45,8 +45,14 @@ export const roomHandlers = [
     return HttpResponse.json(room)
   }),
 
-  http.post('/api/rooms/:code/start', async ({ request }) => {
-    // Proxy ke mock-server/socket.js HTTP endpoint agar socket state terupdate!
+  http.post('/api/rooms/:code/start', async ({ request, params }) => {
+    // 1. Update local MSW store
+    const room = getRoom(params.code)
+    if (room) {
+      room.status = 'playing'
+    }
+
+    // 2. Proxy ke mock-server/socket.js HTTP endpoint agar socket state terupdate!
     const url = new URL(request.url)
     url.port = '3000'
     url.hostname = 'localhost'
