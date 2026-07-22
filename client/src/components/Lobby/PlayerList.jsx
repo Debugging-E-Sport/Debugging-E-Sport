@@ -13,7 +13,9 @@ export default function PlayerList() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" id="participants-list">
         {players.map(p => (
           <div key={p.id} className="participant-enter flex items-center gap-3 bg-arena-bg border border-arena-border rounded-lg p-3">
-            <img src={`https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/${p.avatar}`} alt={p.name} className={`w-10 h-10 rounded-full border-2 ${p.role === 'HOST' ? 'border-arena-purple' : 'border-arena-border'}`} />
+            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-mono font-bold text-lg flex-shrink-0 ${p.role === 'HOST' ? 'border-arena-purple text-arena-purpleLight bg-arena-purple/10' : 'border-arena-border text-arena-green bg-arena-green/10'}`}>
+              {p.name.charAt(0).toUpperCase()}
+            </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="font-mono text-sm font-semibold text-white block truncate">{p.name}</span>

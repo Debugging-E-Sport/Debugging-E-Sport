@@ -23,11 +23,9 @@ export default function Navbar() {
           </div>
           {/* User */}
           <div className="flex items-center gap-3">
-            <img 
-              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
-              alt="avatar" 
-              className="w-8 h-8 rounded-full border border-arena-border" 
-            />
+            <div className="w-8 h-8 rounded-full border border-arena-border bg-arena-panel flex flex-shrink-0 items-center justify-center font-mono font-bold text-arena-green text-sm">
+              {user?.username ? user.username.charAt(0).toUpperCase() : 'G'}
+            </div>
             <span className="font-mono text-sm text-white">{user?.username || 'Guest'}</span>
             <button 
               onClick={logout}
