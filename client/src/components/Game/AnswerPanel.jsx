@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import Editor from 'react-simple-code-editor'
+import CodeEditor from 'react-simple-code-editor'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-python'
 import 'prismjs/themes/prism-twilight.css' // Dark theme that fits well
+
+const Editor = CodeEditor.default || CodeEditor;
 
 export default function AnswerPanel() {
   const [activeTab, setActiveTab] = useState('answer') // 'answer' or 'explain'
