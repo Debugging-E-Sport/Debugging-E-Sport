@@ -52,7 +52,7 @@ export default function ArenaLobbyPage() {
           {/* RIGHT SIDEBAR (col 4) */}
           <div className="col-span-12 lg:col-span-4 space-y-5">
             <GameSummaryCard />
-            {isHost && <HostActionsCard roomCode={currentRoom.code} />}
+            <HostActionsCard roomCode={currentRoom.code} />
           </div>
         </div>
       </main>

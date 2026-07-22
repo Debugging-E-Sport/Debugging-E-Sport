@@ -32,7 +32,7 @@ export const authHandlers = [
     }
 
     const token = await createToken(user.id, user.username)
-    return HttpResponse.json({ token, username: user.username })
+    return HttpResponse.json({ id: user.id, token, username: user.username })
   }),
 
   http.get('/api/auth/me', async ({ request }) => {
