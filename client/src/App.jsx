@@ -12,8 +12,8 @@ function App() {
 
   return (
     <AuthProvider>
-      <RoomProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <RoomProvider>
           <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden flex flex-col">
             <Routes>
               <Route path="/login" element={<LoginPage />} />
@@ -25,8 +25,8 @@ function App() {
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </div>
-        </BrowserRouter>
-      </RoomProvider>
+        </RoomProvider>
+      </BrowserRouter>
     </AuthProvider>
   )
 }
