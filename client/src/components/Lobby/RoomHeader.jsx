@@ -18,9 +18,13 @@ export default function RoomHeader({ roomCode = 'BX-7291', hostName = 'ByteHunte
             <span className="ready-badge text-xs font-mono px-2 py-0.5 rounded-full">● OPEN</span>
           </div>
           <h1 className="font-mono text-2xl font-bold text-white">Debug Arena #{roomCode.split('-')[1] || '0000'}</h1>
-          <p className="text-arena-muted text-sm mt-1">
-            Hosted by <span className="text-arena-green font-medium">{hostName}</span> · Waiting for players to join...
-          </p>
+          <div className="text-arena-muted text-sm mt-1.5 flex items-center gap-2">
+            <span>Hosted by <span className="text-arena-green font-medium">{hostName}</span></span>
+            <span>·</span>
+            <span className="font-mono text-[10px] bg-arena-green/10 text-arena-green px-2 py-0.5 rounded border border-arena-green/30 animate-pulse">
+              [AWAITING_CHALLENGERS]
+            </span>
+          </div>
         </div>
         {/* Room Code */}
         <div className="bg-arena-bg border border-arena-border rounded-lg p-4 text-center min-w-[180px]">

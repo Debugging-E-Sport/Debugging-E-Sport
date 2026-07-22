@@ -15,7 +15,7 @@ export default function HostActionsCard({ roomCode }) {
           <div className="bg-arena-green h-1.5 rounded-full transition-all" style={{ width: '66%' }}></div>
         </div>
         <button 
-          className="start-btn w-full text-black font-mono font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 text-sm cursor-pointer"
+          className="start-btn w-full text-black font-mono font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 text-sm cursor-pointer shadow-[0_0_20px_rgba(0,255,65,0.4)] hover:shadow-[0_0_30px_rgba(0,255,65,0.8)] hover:scale-[1.02] transition-all animate-[pulse_2s_infinite]"
           onClick={() => {
             fetch(`/api/rooms/${roomCode}/start`, {
               method: 'POST',

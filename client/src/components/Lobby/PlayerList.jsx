@@ -33,12 +33,14 @@ export default function PlayerList() {
             )}
           </div>
         ))}
-        {/* Empty slots */}
-        <div className="flex items-center justify-center gap-2 bg-arena-bg border border-dashed border-arena-border rounded-lg p-3 h-[72px] text-arena-muted font-mono text-xs">
-          <i className="fa-solid fa-plus"></i> Waiting for player...
-        </div>
-        <div className="flex items-center justify-center gap-2 bg-arena-bg border border-dashed border-arena-border rounded-lg p-3 h-[72px] text-arena-muted font-mono text-xs">
-          <i className="fa-solid fa-plus"></i> Waiting for player...
+        {/* Animated Empty Slots (Scanner Card) */}
+        <div className="relative flex items-center justify-center gap-3 bg-arena-bg/40 border border-arena-border/60 rounded-lg p-3 h-[72px] overflow-hidden group shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
+          {/* Efek radar berjalan */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-arena-green/15 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
+          <div className="w-10 h-10 rounded-full border border-arena-green/40 border-dashed flex items-center justify-center relative z-10 animate-[spin_4s_linear_infinite] shadow-[0_0_10px_rgba(0,255,65,0.2)]">
+            <i className="fa-solid fa-crosshairs text-arena-green text-sm"></i>
+          </div>
+          <span className="font-mono text-xs text-arena-green relative z-10 animate-pulse tracking-widest">SEARCHING_FOR_CHALLENGERS...</span>
         </div>
       </div>
       
