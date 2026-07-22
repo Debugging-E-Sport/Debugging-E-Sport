@@ -1,4 +1,5 @@
-const { Room, User, Score } = require("../models/index");
+const generateUniqueCode = require("../helpers/codeRandom");
+const { Room, User, Score, RoomParticipants } = require("../models/index");
 
 class RoomController {
   // 1. POST /rooms (Membuat room baru)
@@ -6,8 +7,11 @@ class RoomController {
     try {
       const hostId = req.loginInfo.id;
 
+      const code = generateUniqueCode();
+
       const newRoom = await Room.create({
         hostId,
+        code,
         status: "waiting",
       });
 
@@ -34,7 +38,7 @@ class RoomController {
         throw { name: "RoomNotFound" };
       }
 
-      await RoomParticipant.findOrCreate({
+      await RoomParticipants.findOrCreate({
         where: { roomId: room.id, userId },
         defaults: { roomId: room.id, userId },
       });

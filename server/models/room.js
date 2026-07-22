@@ -35,13 +35,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      hooks: {
-        beforeCreate: (room, options) => {
-          if (!room.code) {
-            room.code = generateUniqueCode();
-          }
-        },
-      },
       sequelize,
       modelName: "Room",
     },
