@@ -5,53 +5,48 @@ const cors = require("cors");
 const AuthController = require("./controllers/authController");
 const errorHandler = require("./middlewares/errorHandler");
 const authentication = require("./middlewares/authentication");
+const router = require("./routers/index");
 
 // Middlewares (cors, urlencoded, json)
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Auth
-app.post("/auth/login", AuthController.login);
-app.post("/auth/register", AuthController.register);
-
-// middlewares Authentication
-app.use(authentication);
-app.get("/auth/me", AuthController.me);
+app.use(router);
 
 // Rooms
-app.post("/rooms", (req, res) => {
+app.post("/api/rooms", (req, res) => {
   res.send("Test Success");
 });
-app.post("/rooms/:code/join", (req, res) => {
+app.post("/api/rooms/:code/join", (req, res) => {
   res.send("Test Success");
 });
-app.get("/rooms/:code", (req, res) => {
+app.get("/api/rooms/:code", (req, res) => {
   res.send("Test Success");
 });
-app.post("/rooms/:code/start", (req, res) => {
+app.post("/api/rooms/:code/start", (req, res) => {
   res.send("Test Success");
 });
 
 // Snippets
-app.post("/snippets/random", (req, res) => {
+app.post("/api/snippets/random", (req, res) => {
   res.send("Test Success");
 });
-app.post("/snippets/:id", (req, res) => {
+app.post("/api/snippets/:id", (req, res) => {
   res.send("Test Success");
 });
-app.post("/snippets", (req, res) => {
+app.post("/api/snippets", (req, res) => {
   res.send("Test Success");
 });
 
 // Scoring
-app.post("/scores/submit", (req, res) => {
+app.post("/api/scores/submit", (req, res) => {
   res.send("Test Success");
 });
-app.post("/rooms/:code/leaderboard", (req, res) => {
+app.post("/api/rooms/:code/leaderboard", (req, res) => {
   res.send("Test Success");
 });
-app.post("/rooms/:code/results", (req, res) => {
+app.post("/api/rooms/:code/results", (req, res) => {
   res.send("Test Success");
 });
 

@@ -28,6 +28,11 @@ function errorHandler(error, req, res, next) {
     status = 403;
   }
 
+  if (error.name === "RoomNotFound") {
+    message = "Room Not Found";
+    status = 403;
+  }
+
   res.status(status).json({
     message,
   });

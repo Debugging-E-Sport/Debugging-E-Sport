@@ -9,7 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.Room, { foreignKey: "hostId" });
+      this.hasMany(models.Score, { foreignKey: "userId" });
+      this.belongsToMany(models.Room, {
+        through: models.RoomParticipant,
+        foreignKey: "userId",
+        as: "joinedRooms",
+      });
     }
   }
   User.init(
