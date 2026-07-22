@@ -30,27 +30,9 @@ app.use(express.json());
 // Router
 app.use(router);
 
-// Snippets
-app.post("/api/snippets/random", (req, res) => {
-  res.send("Test Success");
-});
-app.post("/api/snippets/:id", (req, res) => {
-  res.send("Test Success");
-});
-app.post("/api/snippets", (req, res) => {
-  res.send("Test Success");
-});
-
-// Scoring
-app.post("/api/scores/submit", (req, res) => {
-  res.send("Test Success");
-});
-app.post("/api/rooms/:code/leaderboard", (req, res) => {
-  res.send("Test Success");
-});
-app.post("/api/rooms/:code/results", (req, res) => {
-  res.send("Test Success");
-});
+// TODO: snippets endpoints — implemented in routers/snippet.js
+// TODO: scoring endpoints — pending AI scoring pipeline
+// TODO: leaderboard endpoint — pending socket server
 
 // Middlewares ( Error Handler )
 app.use(errorHandler);

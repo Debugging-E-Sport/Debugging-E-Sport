@@ -1,6 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-const generateUniqueCode = require("../helpers/codeRandom");
 module.exports = (sequelize, DataTypes) => {
   class Room extends Model {
     /**

@@ -49,12 +49,6 @@ function errorHandler(error, req, res, next) {
     status = 400;
   }
 
-  if (err.name === "SequelizeUniqueConstraintError") {
-    return res
-      .status(400)
-      .json({ message: "Room code collision detected, please try again." });
-  }
-
   res.status(status).json({
     message,
   });

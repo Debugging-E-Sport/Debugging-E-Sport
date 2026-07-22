@@ -1,5 +1,5 @@
 const generateUniqueCode = require("../helpers/codeRandom");
-const { Room, User, Score, RoomParticipants } = require("../models/index");
+const { Room, User, RoomParticipants } = require("../models/index");
 
 class RoomController {
   // 1. POST /rooms (Membuat room baru)
