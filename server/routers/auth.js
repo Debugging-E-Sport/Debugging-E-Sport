@@ -83,6 +83,7 @@ router.post("/api/auth/register", AuthController.register);
  *               properties:
  *                 access_token:
  *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGljZSIsImlhdCI6MTcyMTY1MDgwMH0.abc123
  *       400:
  *         description: Username atau password kosong
  *       403:
