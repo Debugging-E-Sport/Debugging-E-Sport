@@ -4,6 +4,7 @@ const port = 3000;
 const cors = require("cors");
 const AuthController = require("./controllers/authController");
 const errorHandler = require("./middlewares/errorHandler");
+const authentication = require("./middlewares/authentication");
 
 // Middlewares (cors, urlencoded, json)
 app.use(cors());
@@ -15,10 +16,8 @@ app.post("/auth/login", AuthController.login);
 app.post("/auth/register", AuthController.register);
 
 // middlewares Authentication
-// app.use()
-app.get("/auth/me", (req, res) => {
-  res.send("Informasi User yang sedang Login");
-});
+app.use(authentication);
+app.get("/auth/me", AuthController.me);
 
 // Rooms
 app.post("/rooms", (req, res) => {

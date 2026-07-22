@@ -18,6 +18,16 @@ function errorHandler(error, req, res, next) {
     status = 403;
   }
 
+  if (error.name === "notFoundAuthorization") {
+    message = "Token Not Found";
+    status = 403;
+  }
+
+  if (error.name === "userNotFound") {
+    message = "User Not Found";
+    status = 403;
+  }
+
   res.status(status).json({
     message,
   });

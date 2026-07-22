@@ -38,6 +38,17 @@ class AuthController {
       next(error);
     }
   }
+
+  static async me(req, res, next) {
+    try {
+      const user = req.loginInfo;
+      console.log(user);
+
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = AuthController;
