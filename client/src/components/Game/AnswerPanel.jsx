@@ -18,7 +18,7 @@ export default function AnswerPanel() {
   }
 
   return (
-    <section id="answer-panel" className="col-span-12 lg:col-span-4 xl:col-span-4 space-y-4">
+    <section id="answer-panel" className="space-y-4">
       
       {/* Answer Tabs */}
       <div className="bg-arena-panel border border-arena-border rounded-xl overflow-hidden">
@@ -54,14 +54,14 @@ export default function AnswerPanel() {
                 type="number" 
                 defaultValue="7" 
                 placeholder="Line number..."
-                className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white placeholder-arena-muted focus:outline-none focus:border-arena-green focus:shadow-[0_0_0_3px_rgba(0,255,65,0.1)] transition-all"
+                className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white placeholder-arena-muted focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all"
               />
             </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// bug type</label>
               <select 
                 defaultValue="Off-by-one error"
-                className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white focus:outline-none focus:border-arena-green transition-all"
+                className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all"
               >
                 <option value="">Select bug type...</option>
                 <option value="Off-by-one error">Off-by-one error</option>
@@ -75,7 +75,7 @@ export default function AnswerPanel() {
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// explain the bug</label>
               <textarea 
-                className="answer-area w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2.5 font-mono text-sm text-white placeholder-arena-muted resize-none transition-all" 
+                className="answer-area w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2.5 font-mono text-sm text-white placeholder-arena-muted resize-none focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all" 
                 rows="4" 
                 placeholder="Describe the bug and the fix..."
                 defaultValue="The inner loop range(0, n) causes an IndexError because when j reaches n-1, accessing arr[j+1] goes out of bounds. It should be range(0, n-i-1) to avoid comparing already-sorted elements."
@@ -83,7 +83,7 @@ export default function AnswerPanel() {
             </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// fixed code (optional, +bonus pts)</label>
-              <div className="w-full bg-[#141414] border border-arena-border rounded-lg transition-all focus-within:border-arena-green focus-within:shadow-[0_0_0_3px_rgba(0,255,65,0.1)] overflow-hidden">
+              <div className="w-full bg-[#141414] border border-arena-border rounded-lg transition-all focus-within:border-arena-green focus-within:shadow-[0_0_15px_rgba(0,255,65,0.3)] overflow-hidden">
                 <Editor
                   value={code}
                   onValueChange={code => setCode(code)}
@@ -102,7 +102,7 @@ export default function AnswerPanel() {
             {/* Submit */}
             <button 
               type="submit"
-              className="submit-btn w-full text-black font-mono font-bold text-sm py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer"
+              className="submit-btn w-full text-black font-mono font-bold text-sm py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01] shadow-[0_0_15px_rgba(0,255,65,0.2)] hover:shadow-[0_0_25px_rgba(0,255,65,0.6)] animate-[pulse_3s_infinite]"
             >
               <i className="fa-solid fa-paper-plane text-xs"></i> SUBMIT ANSWER
             </button>
@@ -180,48 +180,6 @@ export default function AnswerPanel() {
           </div>
         )}
       </div>
-
-      {/* Other players' status */}
-      <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <span className="font-mono text-xs font-bold text-white">Live Progress</span>
-          <div className="flex items-center gap-1.5 font-mono text-xs text-arena-green">
-            <span className="relative inline-flex h-1.5 w-1.5">
-              <span className="live-dot absolute"></span>
-              <span className="relative inline-block h-1.5 w-1.5 rounded-full bg-arena-green"></span>
-            </span>
-            WebSocket
-          </div>
-        </div>
-        <div className="space-y-2.5">
-          {/* Players */}
-          <div className="flex items-center gap-2.5">
-            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" className="w-6 h-6 rounded-full border border-arena-border flex-shrink-0" alt="avatar" />
-            <span className="font-mono text-xs text-white flex-1 truncate">NullPointer99</span>
-            <div className="flex-1 max-w-[80px]">
-              <div className="w-full bg-arena-border rounded-full h-1"><div className="h-1 bg-arena-green rounded-full" style={{ width: '100%' }}></div></div>
-            </div>
-            <span className="font-mono text-xs text-arena-green flex-shrink-0">Submitted</span>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" className="w-6 h-6 rounded-full border border-arena-border flex-shrink-0" alt="avatar" />
-            <span className="font-mono text-xs text-white flex-1 truncate">SegFaultSlayer</span>
-            <div className="flex-1 max-w-[80px]">
-              <div className="w-full bg-arena-border rounded-full h-1"><div className="h-1 bg-yellow-400 rounded-full" style={{ width: '70%' }}></div></div>
-            </div>
-            <span className="font-mono text-xs text-yellow-400 flex-shrink-0">Typing...</span>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" className="w-6 h-6 rounded-full border border-arena-border flex-shrink-0" alt="avatar" />
-            <span className="font-mono text-xs text-white flex-1 truncate">HeapOverflow</span>
-            <div className="flex-1 max-w-[80px]">
-              <div className="w-full bg-arena-border rounded-full h-1"><div className="h-1 bg-arena-border rounded-full" style={{ width: '20%' }}></div></div>
-            </div>
-            <span className="font-mono text-xs text-arena-muted flex-shrink-0">Thinking</span>
-          </div>
-        </div>
-      </div>
-
     </section>
   )
 }

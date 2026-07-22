@@ -131,6 +131,16 @@ body {
   }
 }
 
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 .glow-green {
   box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
 }

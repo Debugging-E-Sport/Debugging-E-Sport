@@ -1,6 +1,6 @@
 export default function LiveLeaderboard() {
   return (
-    <section id="leaderboard-panel" className="col-span-12 lg:col-span-3 xl:col-span-3 space-y-4">
+    <section id="leaderboard-panel" className="space-y-6">
       {/* Leaderboard card */}
       <div className="bg-arena-panel border border-arena-border rounded-xl overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-arena-border">
@@ -72,6 +72,48 @@ export default function LiveLeaderboard() {
           </div>
         </div>
       </div>
+
+      {/* Other players' status (Moved from AnswerPanel) */}
+      <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-mono text-xs font-bold text-white">Live Progress</span>
+          <div className="flex items-center gap-1.5 font-mono text-xs text-arena-green">
+            <span className="relative inline-flex h-1.5 w-1.5">
+              <span className="live-dot absolute"></span>
+              <span className="relative inline-block h-1.5 w-1.5 rounded-full bg-arena-green"></span>
+            </span>
+            WebSocket
+          </div>
+        </div>
+        <div className="space-y-3 mt-4">
+          {/* Players */}
+          <div className="flex items-center gap-3">
+            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" className="w-7 h-7 rounded-full border border-arena-border flex-shrink-0" alt="avatar" />
+            <span className="font-mono text-xs text-white flex-1 truncate">NullPointer99</span>
+            <div className="flex-1 max-w-[80px]">
+              <div className="w-full bg-arena-border rounded-full h-1"><div className="h-1 bg-arena-green rounded-full shadow-[0_0_5px_rgba(0,255,65,0.8)]" style={{ width: '100%' }}></div></div>
+            </div>
+            <span className="font-mono text-[10px] text-arena-green flex-shrink-0 animate-pulse">Submitted</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" className="w-7 h-7 rounded-full border border-arena-border flex-shrink-0" alt="avatar" />
+            <span className="font-mono text-xs text-white flex-1 truncate">SegFaultSlayer</span>
+            <div className="flex-1 max-w-[80px]">
+              <div className="w-full bg-arena-border rounded-full h-1"><div className="h-1 bg-yellow-400 rounded-full" style={{ width: '70%' }}></div></div>
+            </div>
+            <span className="font-mono text-[10px] text-yellow-400 flex-shrink-0 animate-pulse">Typing...</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" className="w-7 h-7 rounded-full border border-arena-border flex-shrink-0" alt="avatar" />
+            <span className="font-mono text-xs text-white flex-1 truncate">HeapOverflow</span>
+            <div className="flex-1 max-w-[80px]">
+              <div className="w-full bg-arena-border rounded-full h-1"><div className="h-1 bg-arena-border rounded-full" style={{ width: '20%' }}></div></div>
+            </div>
+            <span className="font-mono text-[10px] text-arena-muted flex-shrink-0">Thinking</span>
+          </div>
+        </div>
+      </div>
+
     </section>
   )
 }

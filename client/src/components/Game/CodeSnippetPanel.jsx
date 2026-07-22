@@ -4,7 +4,7 @@ export default function CodeSnippetPanel() {
   const [hintUsed, setHintUsed] = useState(false)
 
   return (
-    <section id="code-panel" className="col-span-12 lg:col-span-5 xl:col-span-5 space-y-4">
+    <section id="code-panel" className="space-y-4">
       
       {/* Question header */}
       <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
