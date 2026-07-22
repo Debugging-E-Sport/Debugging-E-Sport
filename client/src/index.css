@@ -3,12 +3,14 @@
 @theme {
   --color-arena-bg: #0d1117;
   --color-arena-panel: #161b22;
+  --color-arena-panel2: #1c2128;
   --color-arena-border: #30363d;
   --color-arena-text: #c9d1d9;
   --color-arena-muted: #8b949e;
   --color-arena-green: #00ff41;
   --color-arena-greenDim: #2ea043;
   --color-arena-purple: #7c3aed;
+  --color-arena-purpleLight: #a78bfa;
 
   --font-sans: 'Inter', sans-serif;
   --font-mono: '"JetBrains Mono"', monospace;
@@ -17,7 +19,7 @@
 }
 
 html, body, #root {
-  height: 100%;
+  min-height: 100vh;
 }
 
 body {
@@ -113,3 +115,197 @@ body {
   color: var(--color-arena-green);
   border-color: var(--color-arena-green);
 }
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); border-color: rgba(0, 255, 65, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(0, 255, 65, 0.6); border-color: rgba(0, 255, 65, 0.8); }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@layer utilities {
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+.badge-glow {
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+}
+
+.grid-bg {
+  background-image: linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.participant-enter {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+      opacity: 0;
+      transform: translateX(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateX(0);
+  }
+}
+
+.copy-btn:hover {
+  color: var(--color-arena-green);
+}
+
+.difficulty-badge.easy {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.difficulty-badge.medium {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.difficulty-badge.hard {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.ready-badge {
+  background: rgba(0, 255, 65, 0.1);
+  color: var(--color-arena-green);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+
+.waiting-badge {
+  background: rgba(139, 148, 158, 0.1);
+  color: var(--color-arena-muted);
+  border: 1px solid rgba(139, 148, 158, 0.2);
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #7c3aed 0%, #00ff41 100%);
+  transition: all 0.2s;
+}
+
+.start-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 255, 65, 0.3);
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Game Specific Styles --- */
+/* Timer ring */
+.timer-ring { transform: rotate(-90deg); }
+.timer-circle {
+  stroke-dasharray: 264;
+  stroke-dashoffset: 66;
+  transition: stroke-dashoffset 1s linear;
+}
+.timer-urgent { color: #f85149 !important; }
+.timer-urgent .timer-circle { stroke: #f85149 !important; }
+
+/* Code highlighting */
+.code-kw { color: #ff7b72; }       /* keywords */
+.code-fn { color: #d2a8ff; }       /* functions */
+.code-str { color: #a5d6ff; }      /* strings */
+.code-num { color: #79c0ff; }      /* numbers */
+.code-comment { color: #6e7681; font-style: italic; } /* comments */
+.code-var { color: #ffa657; }      /* variables */
+.bug-line {
+  background: rgba(248,81,73,0.15);
+  border-left: 3px solid #f85149;
+  display: block;
+  margin-left: -16px;
+  padding-left: 13px;
+  margin-right: -16px;
+  padding-right: 16px;
+}
+.line-num { color: #484f58; user-select: none; min-width: 2rem; text-align: right; padding-right: 12px; }
+
+/* Answer textarea */
+.answer-area:focus { outline: none; border-color: #00ff41; box-shadow: 0 0 0 3px rgba(0,255,65,0.1); }
+.ans-tab-active { background: var(--color-arena-panel); color: var(--color-arena-green); border-color: var(--color-arena-border); }
+
+/* Leaderboard rank colors */
+.rank-1 { color: #ffd700; }
+.rank-2 { color: #c0c0c0; }
+.rank-3 { color: #cd7f32; }
+
+/* Pulse animation for "new score" effect */
+@keyframes scoreFlash { 0%{background-color:rgba(0,255,65,0.2)} 100%{background-color:transparent} }
+.score-flash { animation: scoreFlash 0.8s ease-out; }
+
+/* Live dot (matches live-pulse but specific to game UI) */
+.live-dot::before {
+  content: ''; position: absolute; inset: -3px; border-radius: 9999px;
+  background: var(--color-arena-green); opacity: 0.4; animation: ldPulse 2s ease-in-out infinite;
+}
+@keyframes ldPulse { 0%,100%{transform:scale(1);opacity:.4} 50%{transform:scale(1.8);opacity:0} }
+
+.hint-used { opacity: 0.4; pointer-events: none; }
+
+/* Custom Submit Button styling */
+.submit-btn {
+  background: linear-gradient(135deg, #00ff41 0%, #2ea043 100%);
+  color: #000;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 255, 65, 0.5);
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-20deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
+}

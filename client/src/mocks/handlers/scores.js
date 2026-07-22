@@ -84,11 +84,14 @@ export const scoreHandlers = [
     return HttpResponse.json(getLeaderboard(params.code))
   }),
 
-  http.get('/api/rooms/:code/results', ({ params }) => {
-    const room = getRoom(params.code)
-    if (!room) {
-      return HttpResponse.json({ error: 'Room not found' }, { status: 404 })
-    }
-    return HttpResponse.json(getResults(params.code))
+  http.get('/api/rooms/:code/results', async ({ request }) => {
+    // Proxy ke mock-server/socket.js HTTP endpoint agar mengambil leaderboard dari socket state
+    const url = new URL(request.url)
+    url.port = '3000'
+    url.hostname = 'localhost'
+    return fetch(url.toString(), {
+      method: request.method,
+      headers: request.headers,
+    })
   }),
 ]

@@ -49,12 +49,26 @@ export function createRoom(hostId, hostUsername) {
 }
 
 export function getRoom(code) {
-  return store.rooms[code] || null
+  if (!store.rooms[code]) {
+    // DEV MODE: Auto-seed room to survive page reloads
+    store.rooms[code] = {
+      id: Date.now(),
+      code,
+      host_id: 1, // dummy host
+      host_username: 'Host',
+      status: 'waiting',
+      players: [{ id: 1, username: 'Host' }],
+      scores: {},
+      rounds: [],
+      currentRound: 0,
+      created_at: new Date().toISOString(),
+    }
+  }
+  return store.rooms[code]
 }
 
 export function joinRoom(code, userId, username) {
-  const room = store.rooms[code]
-  if (!room) return { error: 'Room not found', status: 404 }
+  const room = getRoom(code) // this will auto-seed if not found
   if (room.status !== 'waiting') return { error: 'Game already started', status: 400 }
   const exists = room.players.find(p => p.id === userId)
   if (!exists) {
@@ -112,8 +126,8 @@ export function getResults(code) {
 
 function generateCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let code = ''
-  for (let i = 0; i < 6; i++) {
+  let code = 'BX-'
+  for (let i = 0; i < 4; i++) {
     code += chars[Math.floor(Math.random() * chars.length)]
   }
   return code

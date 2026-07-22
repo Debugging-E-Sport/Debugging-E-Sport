@@ -4,7 +4,6 @@ import Spinner from './Spinner.jsx'
 export default function LoginForm({ onSubmit, isLoading, error }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -40,18 +39,12 @@ export default function LoginForm({ onSubmit, isLoading, error }) {
           <div className="relative">
             <i className="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-white/50 text-sm" />
             <input
-              type={showPassword ? 'text' : 'password'}
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="········"
-              className="w-full bg-[#0d1117] border border-[#30363d] rounded-lg pl-10 pr-12 py-3 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#00ff41] transition-all font-mono"
+              className="w-full bg-[#0d1117] border border-[#30363d] rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#00ff41] transition-all font-mono"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#00ff41] transition-colors"
-            >            
-            </button>
           </div>
         </div>
         {error && (

@@ -2,7 +2,60 @@ import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import { snippets } from '../src/mocks/data/snippets.js'
 
-const httpServer = createServer()
+const httpServer = createServer((req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200)
+    res.end()
+    return
+  }
+
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`)
+  const path = url.pathname
+
+  if (req.method === 'POST' && path.match(/^\/api\/rooms\/([^/]+)\/start$/)) {
+    const code = path.split('/')[3]
+    const room = gameRooms[code]
+    if (!room) {
+      res.writeHead(404, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Room not found' }))
+    }
+    
+    room.status = 'playing'
+    room.currentRound = 0
+    io.of('/game').to(code).emit('game:started', {
+      totalRounds: room.totalRounds,
+      roundDuration: 30,
+    })
+    setTimeout(() => startRound(code), 2000)
+
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({ status: 'playing', started_at: new Date().toISOString() }))
+  }
+
+  if (req.method === 'GET' && path.match(/^\/api\/rooms\/([^/]+)\/results$/)) {
+    const code = path.split('/')[3]
+    const room = gameRooms[code]
+    if (!room) {
+      res.writeHead(404, { 'Content-Type': 'application/json' })
+      return res.end(JSON.stringify({ error: 'Room not found' }))
+    }
+
+    const leaderboard = Object.entries(room.scores)
+      .map(([, val]) => ({ username: val.username, totalScore: val.totalScore }))
+      .sort((a, b) => b.totalScore - a.totalScore)
+
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    return res.end(JSON.stringify({
+      winner: leaderboard[0] || null,
+      finalLeaderboard: leaderboard,
+      rounds: []
+    }))
+  }
+})
 const io = new Server(httpServer, {
   cors: { origin: '*', methods: ['GET', 'POST'] },
 })
