@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useRoom } from '../context/RoomContext'
 import { useAuthContext } from '../context/AuthContext'
+import { useSocket } from '../context/SocketContext'
 import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
 import RoomHeader from '../components/Lobby/RoomHeader'
@@ -14,6 +15,7 @@ export default function ArenaLobbyPage() {
   const { code } = useParams()
   const { currentRoom, fetchRoom, isLoading, error } = useRoom()
   const { user } = useAuthContext()
+  const { connect, players, isConnected, leaveGame } = useSocket()
   const toast = useToast()
 
   useEffect(() => {
@@ -21,6 +23,18 @@ export default function ArenaLobbyPage() {
       fetchRoom(code)
     }
   }, [code, currentRoom, fetchRoom])
+
+  // Connect to socket when room loads
+  useEffect(() => {
+    if (!code) return
+    const cleanup = connect(code)
+    return () => {
+      if (cleanup && typeof cleanup === 'function') {
+        cleanup()
+      }
+      leaveGame(code)
+    }
+  }, [code])
 
   // Show error via toast
   useEffect(() => {
@@ -74,13 +88,21 @@ export default function ArenaLobbyPage() {
   return (
     <div className="text-arena-text min-h-screen grid-bg">
       <Navbar />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Socket connection status indicator */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className={`inline-block w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.6)]' : 'bg-red-400'}`}></span>
+          <span className="font-mono text-xs text-arena-muted">
+            {isConnected ? 'Connected' : 'Connecting...'}
+          </span>
+        </div>
+
         <div className="grid grid-cols-12 gap-4 sm:gap-6">
           {/* LEFT: Room Setup & Participants (col 8) */}
           <div className="col-span-12 lg:col-span-8 space-y-4 sm:space-y-6">
             <RoomHeader roomCode={currentRoom.code} hostName={currentRoom.host_username || 'Host'} />
-            <LobbyTabs />
+            <LobbyTabs players={players} isConnected={isConnected} />
           </div>
 
           {/* RIGHT SIDEBAR (col 4) */}
