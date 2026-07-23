@@ -349,6 +349,36 @@ function setupGameHandlers(game) {
       }
     });
 
+    // ── game:force-stop (host only) ──────────────────────────────────────
+    socket.on("game:force-stop", async (data) => {
+      try {
+        const roomCode = data?.roomCode || socket._roomCode
+        if (!roomCode) return
+
+        const room = await Room.findOne({ where: { code: roomCode } })
+        if (!room || room.hostId !== socket.user?.id) {
+          socket.emit("game:error", { message: "Only host can stop the game" })
+          return
+        }
+
+        const roomState = gameRooms.get(roomCode)
+        if (roomState) {
+          clearRoomTimer(roomState)
+          game.to(roomCode).emit("game:over", {
+            winner: null,
+            finalLeaderboard: buildLeaderboard(roomState),
+            reason: "Host stopped the game",
+          })
+          gameRooms.delete(roomCode)
+        }
+
+        await Room.update({ status: "finished" }, { where: { code: roomCode } })
+        console.log(`🛑 Host force-stopped game in ${roomCode}`)
+      } catch (err) {
+        console.error("game:force-stop error:", err)
+      }
+    });
+
     // ── disconnect ─────────────────────────────────────────────────────
     socket.on("disconnect", async () => {
       console.log(`🔌 Game socket disconnected: ${socket.id} (${socket.user?.username})`);

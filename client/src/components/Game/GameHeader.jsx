@@ -5,7 +5,7 @@ import { useAuthContext } from '../../context/AuthContext'
 
 export default function GameHeader({ roomCode }) {
   const { user } = useAuthContext()
-  const { isConnected, currentRound, totalRounds, timeLeft, gameState } = useSocket()
+  const { isConnected, currentRound, totalRounds, timeLeft, gameState, forceStop } = useSocket()
   const isUrgent = timeLeft <= 10
   const total = 30 // fallback; timeLimit comes from server
 
@@ -89,7 +89,16 @@ export default function GameHeader({ roomCode }) {
         <div className="flex-1"></div>
 
         {/* Room & User */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3">
+          {/* Host Force Stop */}
+          <button
+            onClick={() => { if (confirm('End game for all players?')) forceStop(roomCode) }}
+            className="font-mono text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/30 px-2.5 py-1 rounded hover:bg-red-500/20 transition-colors cursor-pointer"
+            title="Force stop game (host only)"
+          >
+            ⏹ STOP
+          </button>
+
           {/* Room Code */}
           <div className="flex items-center gap-2 font-mono text-xs text-arena-green bg-arena-green/5 border border-arena-green/20 px-3 py-1.5 rounded-lg shadow-[inset_0_0_8px_rgba(0,255,65,0.1)]">
             <span className="relative inline-flex h-2 w-2 mr-1">

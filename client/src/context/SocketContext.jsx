@@ -151,6 +151,12 @@ export function SocketProvider({ children }) {
     }
   }, [])
 
+  const forceStop = useCallback((roomCode) => {
+    if (socketRef.current?.connected) {
+      socketRef.current.emit('game:force-stop', { roomCode })
+    }
+  }, [])
+
   const signalReady = useCallback((roomCode) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('game:ready', { roomCode })
@@ -217,6 +223,7 @@ export function SocketProvider({ children }) {
     // Actions
     submitAnswer,
     signalReady,
+    forceStop,
   }
 
   return (
