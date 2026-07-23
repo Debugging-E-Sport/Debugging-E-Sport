@@ -287,6 +287,9 @@ function setupGameHandlers(game) {
           bugsMissed: result.bugsMissed,
         });
 
+        // Broadcast incremental leaderboard to ALL players
+        game.to(roomCode).emit("game:leaderboard", buildLeaderboard(roomState));
+
         console.log(
           `${socket.user.username} scored ${result.score}/${result.maxScore} in room ${roomCode} round ${roomState.currentRound}`
         );
