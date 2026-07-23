@@ -28,7 +28,12 @@ export function AuthProvider({ children }) {
     setError(null)
     try {
       const res = await api.post('/auth/login', { username, password })
-      saveAuth({ id: res.data.id, username: res.data.username }, res.data.token)
+      // Backend returns { access_token }
+      const token = res.data.access_token
+      if (!token) throw new Error('No token received')
+      // Decode JWT to get user info (no need for /auth/me roundtrip)
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      saveAuth({ id: payload.id, username: payload.username }, token)
       return true
     } catch (err) {
       const msg =
