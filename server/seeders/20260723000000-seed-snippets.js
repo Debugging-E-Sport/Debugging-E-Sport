@@ -20,6 +20,13 @@ module.exports = {
       updatedAt: new Date(),
     }))
 
+    // Idempotent: skip if snippets already exist
+    const existing = await queryInterface.rawSelect("Snippets", { plain: false, limit: 1 }, ["id"])
+    if (existing && existing.length > 0) {
+      console.log("Snippets already seeded, skipping.")
+      return
+    }
+
     await queryInterface.bulkInsert("Snippets", rows)
   },
 

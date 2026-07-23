@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "prestart": "npx sequelize-cli db:migrate",
+    "prestart": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "dev": "node app.js",
     "test": "jest --forceExit --detectOpenHandles"
   },
