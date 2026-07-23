@@ -72,20 +72,9 @@ app.get("/api-docs.json", (req, res) => {
 // Middlewares ( Error Handler )
 app.use(errorHandler);
 
-// handle koneksi webSocket
-game.on("connection", (socket) => {
-  console.log(`⚡ A client connected with socket ID: ${socket.id}`);
-
-  socket.on("game:join", (data) => {
-    const { roomCode } = data;
-    socket.join(roomCode);
-    console.log(`Socket ${socket.id} joined room: ${roomCode}`);
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`🔌 Client disconnected: ${socket.id}`);
-  });
-});
+// Socket.IO game handlers — full game flow: join/leave/submit/ready/rounds/timers
+const { setupGameHandlers } = require("./socket/gameHandler");
+setupGameHandlers(game);
 
 if (require.main === module) {
   server.listen(port, () => {

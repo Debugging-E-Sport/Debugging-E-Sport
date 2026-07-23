@@ -1,27 +1,13 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router'
+import { useEffect, useMemo } from 'react'
+import { Link, useParams } from 'react-router'
+import { useSocket } from '../../context/SocketContext'
+import { useAuthContext } from '../../context/AuthContext'
 
-export default function GameHeader({ roomCode, user }) {
-  const [timeLeft, setTimeLeft] = useState(67) // mock time
-  const total = 90
-  const isUrgent = timeLeft <= 20
-  
-  useEffect(() => {
-    const ti = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 0) {
-          clearInterval(ti)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(ti)
-  }, [])
-
-  const pct = timeLeft / total
-  const circumference = 264
-  const strokeDashoffset = circumference * (1 - pct)
+export default function GameHeader({ roomCode }) {
+  const { user } = useAuthContext()
+  const { isConnected, currentRound, totalRounds, timeLeft, gameState } = useSocket()
+  const isUrgent = timeLeft <= 10
+  const total = 30 // fallback; timeLimit comes from server
 
   // Format time (MM:SS)
   const formatTime = (seconds) => {
@@ -29,6 +15,12 @@ export default function GameHeader({ roomCode, user }) {
     const s = (seconds % 60).toString().padStart(2, '0')
     return `${m}:${s}`
   }
+
+  const circumference = 264
+  const pct = total > 0 ? timeLeft / total : 0
+  const strokeDashoffset = circumference * (1 - Math.min(pct, 1))
+
+  const roundProgress = totalRounds > 0 ? `${currentRound}/${totalRounds}` : '—'
 
   return (
     <header className="border-b border-arena-border bg-arena-bg/90 backdrop-blur-sm sticky top-0 z-50">
@@ -48,15 +40,16 @@ export default function GameHeader({ roomCode, user }) {
         {/* Round indicator */}
         <div className="flex items-center gap-2 bg-arena-panel border border-arena-border rounded-lg px-3 py-1.5 hidden md:flex">
           <span className="font-mono text-xs text-arena-muted">ROUND</span>
-          <span className="font-mono text-sm font-bold text-white">3</span>
-          <span className="text-arena-border">/</span>
-          <span className="font-mono text-sm text-arena-muted">5</span>
+          <span className="font-mono text-sm font-bold text-white">{roundProgress}</span>
         </div>
 
         {/* Progress bar */}
         <div className="flex-1 max-w-xs hidden sm:block">
           <div className="w-full bg-arena-border rounded-full h-1.5">
-            <div className="h-1.5 rounded-full bg-gradient-to-r from-arena-purple to-arena-green" style={{ width: '60%' }}></div>
+            <div 
+              className="h-1.5 rounded-full bg-gradient-to-r from-arena-purple to-arena-green transition-all duration-1000" 
+              style={{ width: totalRounds > 0 ? `${(currentRound / totalRounds) * 100}%` : '0%' }}
+            />
           </div>
         </div>
 
@@ -76,12 +69,13 @@ export default function GameHeader({ roomCode, user }) {
                 fill="none" 
                 stroke={isUrgent ? '#f85149' : '#00ff41'} 
                 strokeWidth="3" 
-                strokeLinecap="round" 
-                style={{ strokeDashoffset }}
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className={`font-mono text-sm font-bold ${isUrgent ? 'text-arena-red' : 'text-arena-green'}`}>
+              <span className={`font-mono text-sm font-bold ${isUrgent ? 'text-red-500' : 'text-arena-green'}`}>
                 {timeLeft}
               </span>
             </div>
@@ -100,7 +94,7 @@ export default function GameHeader({ roomCode, user }) {
           <div className="flex items-center gap-2 font-mono text-xs text-arena-green bg-arena-green/5 border border-arena-green/20 px-3 py-1.5 rounded-lg shadow-[inset_0_0_8px_rgba(0,255,65,0.1)]">
             <span className="relative inline-flex h-2 w-2 mr-1">
               <span className="live-dot absolute"></span>
-              <span className="relative inline-block h-2 w-2 rounded-full bg-arena-green"></span>
+              <span className={`relative inline-block h-2 w-2 rounded-full ${isConnected ? 'bg-arena-green' : 'bg-red-500'}`}></span>
             </span>
             {roomCode}
           </div>

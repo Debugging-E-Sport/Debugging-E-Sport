@@ -11,7 +11,10 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  const extraOpts = { ...config, dialectOptions: { ...config.dialectOptions } };
+  // Force IPv4 — Railway doesn't support outbound IPv6
+  extraOpts.dialectOptions.family = 4;
+  sequelize = new Sequelize(process.env[config.use_env_variable], extraOpts);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
