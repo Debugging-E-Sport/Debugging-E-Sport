@@ -150,6 +150,10 @@ class RoomController {
           status: "playing",
           message: "The host has started the game! Get ready.",
         });
+
+        // Trigger the actual game round start via socket handler
+        const { startGame } = require("../socket/gameHandler");
+        await startGame(io, code);
       }
 
       return res.status(200).json({
