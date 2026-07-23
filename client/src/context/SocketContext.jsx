@@ -109,6 +109,11 @@ export function SocketProvider({ children }) {
         ...prev,
         [data.username]: (prev[data.username] || 0) + data.score,
       }))
+      // Toast notification for ALL scores
+      const isMe = user?.username === data.username
+      if (!isMe && data.score > 0) {
+        toast.info(`${data.username} scored ${data.score} pts!`)
+      }
     })
 
     socket.on('game:all-submitted', () => {

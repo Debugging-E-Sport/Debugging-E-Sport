@@ -10,7 +10,6 @@ export default function AnswerPanel() {
 
   const [activeTab, setActiveTab] = useState('answer')
   const [explanation, setExplanation] = useState('')
-  const [bugType, setBugType] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [myScore, setMyScore] = useState(null)
@@ -21,7 +20,6 @@ export default function AnswerPanel() {
     if (currentSnippet?.id) {
       setHasSubmitted(false)
       setExplanation('')
-      setBugType('')
       setMyScore(null)
       setAiError(false)
       setIsSubmitting(false)
@@ -98,25 +96,6 @@ export default function AnswerPanel() {
         {/* ANSWER PANE */}
         {activeTab === 'answer' && (
           <form onSubmit={handleSubmit} className="p-4 space-y-3">
-            <div>
-              <label className="block font-mono text-xs text-arena-green mb-2">// bug type</label>
-              <select 
-                value={bugType}
-                onChange={(e) => setBugType(e.target.value)}
-                className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all"
-              >
-                <option value="">Select bug type...</option>
-                <option value="Off-by-one error">Off-by-one error</option>
-                <option value="Null pointer / Index error">Null pointer / Index error</option>
-                <option value="Logic error">Logic error</option>
-                <option value="Infinite loop">Infinite loop</option>
-                <option value="Type error">Type error</option>
-                <option value="Type coercion">Type coercion</option>
-                <option value="Closure issue">Closure issue</option>
-                <option value="Memory leak">Memory leak</option>
-                <option value="Undefined property">Undefined property</option>
-              </select>
-            </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// explain the bug</label>
               <textarea
