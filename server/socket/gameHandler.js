@@ -162,6 +162,36 @@ function setupGameHandlers(game) {
           playerCount: roomState.players.size,
           players: playersList,
         });
+
+        // If game is already in progress, catch this socket up
+        if (room.status === "playing") {
+          socket.emit("game:started", {
+            totalRounds: roomState.totalRounds,
+            roundDuration: roomState.roundDuration,
+          });
+
+          // If there's an active round, send current state immediately
+          if (roomState.currentSnippetId && roomState.currentRound > 0) {
+            const { sequelize } = require("../models/index");
+            const currentSnippet = await Snippet.findByPk(
+              roomState.currentSnippetId,
+              { attributes: ["id", "title", "context", "code"] }
+            );
+
+            if (currentSnippet) {
+              socket.emit("game:round-start", {
+                round: roomState.currentRound,
+                snippet: {
+                  id: currentSnippet.id,
+                  title: currentSnippet.title,
+                  context: currentSnippet.context,
+                  code: currentSnippet.code,
+                },
+                timeLimit: roomState.roundDuration,
+              });
+            }
+          }
+        }
       } catch (err) {
         console.error("game:join error:", err);
       }
