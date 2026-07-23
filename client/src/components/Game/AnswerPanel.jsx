@@ -1,22 +1,49 @@
 import { useState } from 'react'
-import CodeEditor from 'react-simple-code-editor'
-import Prism from 'prismjs'
-import 'prismjs/components/prism-python'
-import 'prismjs/themes/prism-twilight.css' // Dark theme that fits well
-
-const Editor = CodeEditor.default || CodeEditor;
+import { useParams } from 'react-router'
+import { useSocket } from '../../context/SocketContext'
 
 export default function AnswerPanel() {
-  const [activeTab, setActiveTab] = useState('answer') // 'answer' or 'explain'
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [code, setCode] = useState("for j in range(0, n-i-1):")
-  const [explanation, setExplanation] = useState("The inner loop range(0, n) causes an IndexError because when j reaches n-1, accessing arr[j+1] goes out of bounds. It should be range(0, n-i-1) to avoid comparing already-sorted elements.")
+  const { code: roomCode } = useParams()
+  const { currentSnippet, submitAnswer, signalReady, allSubmitted, lastScore, dismissScoreToast } = useSocket()
+
+  const [activeTab, setActiveTab] = useState('answer')
+  const [explanation, setExplanation] = useState('')
+  const [bugType, setBugType] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [myScore, setMyScore] = useState(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    setIsSubmitted(true)
-    setActiveTab('explain')
+    if (!explanation.trim() || !currentSnippet?.id || isSubmitting) return
+
+    setIsSubmitting(true)
+
+    submitAnswer(roomCode, currentSnippet.id, explanation.trim())
+    setHasSubmitted(true)
+
+    // Simulate a brief delay then switch to AI analysis
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setActiveTab('explain')
+    }, 800)
   }
+
+  const handleReady = () => {
+    signalReady(roomCode)
+    setHasSubmitted(false)
+    setExplanation('')
+    setBugType('')
+    setMyScore(lastScore)
+    dismissScoreToast()
+  }
+
+  // Reset on new snippet
+  if (currentSnippet && hasSubmitted && myScore?.snippetId !== currentSnippet.id) {
+    // New round - check if we need to reset (handled by useEffect in real impl)
+  }
+
+  const showScore = myScore || lastScore
 
   return (
     <section id="answer-panel" className="space-y-4">
@@ -50,18 +77,10 @@ export default function AnswerPanel() {
         {activeTab === 'answer' && (
           <form onSubmit={handleSubmit} className="p-4 space-y-3">
             <div>
-              <label className="block font-mono text-xs text-arena-green mb-2">// line of bug</label>
-              <input 
-                type="number" 
-                defaultValue="7" 
-                placeholder="Line number..."
-                className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white placeholder-arena-muted focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all"
-              />
-            </div>
-            <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// bug type</label>
               <select 
-                defaultValue="Off-by-one error"
+                value={bugType}
+                onChange={(e) => setBugType(e.target.value)}
                 className="w-full bg-arena-bg border border-arena-border rounded-lg px-3 py-2 font-mono text-sm text-white focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all"
               >
                 <option value="">Select bug type...</option>
@@ -70,51 +89,38 @@ export default function AnswerPanel() {
                 <option value="Logic error">Logic error</option>
                 <option value="Infinite loop">Infinite loop</option>
                 <option value="Type error">Type error</option>
+                <option value="Type coercion">Type coercion</option>
+                <option value="Closure issue">Closure issue</option>
                 <option value="Memory leak">Memory leak</option>
+                <option value="Undefined property">Undefined property</option>
               </select>
             </div>
             <div>
               <label className="block font-mono text-xs text-arena-green mb-2">// explain the bug</label>
-              <div className="w-full bg-[#141414] border border-arena-border rounded-lg transition-all focus-within:border-arena-green focus-within:shadow-[0_0_15px_rgba(0,255,65,0.3)] overflow-hidden min-h-[100px]">
-                <Editor
-                  value={explanation}
-                  onValueChange={text => setExplanation(text)}
-                  highlight={code => Prism.highlight(code, Prism.languages.python, 'python')}
-                  padding={12}
-                  style={{
-                    fontFamily: '"JetBrains Mono", monospace',
-                    fontSize: 12,
-                    backgroundColor: 'transparent',
-                    minHeight: '100px'
-                  }}
-                  textareaClassName="focus:outline-none placeholder-arena-muted text-white"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block font-mono text-xs text-arena-green mb-2">// fixed code (optional, +bonus pts)</label>
-              <div className="w-full bg-[#141414] border border-arena-border rounded-lg transition-all focus-within:border-arena-green focus-within:shadow-[0_0_15px_rgba(0,255,65,0.3)] overflow-hidden">
-                <Editor
-                  value={code}
-                  onValueChange={code => setCode(code)}
-                  highlight={code => Prism.highlight(code, Prism.languages.python, 'python')}
-                  padding={12}
-                  style={{
-                    fontFamily: '"JetBrains Mono", monospace',
-                    fontSize: 12,
-                    backgroundColor: 'transparent',
-                  }}
-                  textareaClassName="focus:outline-none placeholder-arena-muted text-white"
-                />
-              </div>
+              <textarea
+                value={explanation}
+                onChange={(e) => setExplanation(e.target.value)}
+                placeholder="Describe the bug you found, why it happens, and how to fix it..."
+                rows={5}
+                className="w-full bg-[#141414] border border-arena-border rounded-lg px-3 py-2.5 font-mono text-sm text-white placeholder-arena-muted focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all resize-none"
+              />
             </div>
 
             {/* Submit */}
             <button 
               type="submit"
-              className="submit-btn w-full font-mono font-extrabold text-sm py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer"
+              disabled={!explanation.trim() || !currentSnippet?.id || isSubmitting}
+              className="submit-btn w-full font-mono font-extrabold text-sm py-3.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <i className="fa-solid fa-paper-plane text-xs"></i> SUBMIT ANSWER
+              {isSubmitting ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin text-xs"></i> SCORING...
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-paper-plane text-xs"></i> SUBMIT ANSWER
+                </>
+              )}
             </button>
             <p className="font-mono text-xs text-arena-muted text-center">Faster submissions earn bonus points ⚡</p>
           </form>
@@ -123,57 +129,49 @@ export default function AnswerPanel() {
         {/* AI ANALYSIS PANE */}
         {activeTab === 'explain' && (
           <div className="p-4 space-y-4">
-            {!isSubmitted ? (
+            {!hasSubmitted ? (
               <div className="text-center py-8">
                 <i className="fa-solid fa-robot text-4xl text-arena-muted mb-3"></i>
                 <p className="font-mono text-sm text-arena-muted">Submit your answer to view AI analysis.</p>
               </div>
-            ) : (
+            ) : showScore ? (
               <>
                 {/* Score */}
                 <div className="bg-arena-bg border border-arena-green/30 rounded-lg p-4 text-center">
                   <p className="font-mono text-xs text-arena-muted mb-1">AI Score</p>
-                  <p className="font-mono text-5xl font-bold text-arena-green">92</p>
-                  <p className="font-mono text-xs text-arena-muted mt-1">/ 100</p>
-                  <div className="flex justify-center gap-1 mt-2">
-                    <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                    <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                    <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                    <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                    <i className="fa-regular fa-star text-arena-muted text-xs"></i>
-                  </div>
+                  <p className="font-mono text-5xl font-bold text-arena-green">{showScore.score || 0}</p>
+                  <p className="font-mono text-xs text-arena-muted mt-1">/ {showScore.maxScore || 100}</p>
+                  {showScore.score > 0 && (
+                    <div className="flex justify-center gap-1 mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <i key={i} className={`fa-${i < Math.ceil((showScore.score / (showScore.maxScore || 100)) * 5) ? 'solid' : 'regular'} fa-star ${i < Math.ceil((showScore.score / (showScore.maxScore || 100)) * 5) ? 'text-yellow-400' : 'text-arena-muted'} text-xs`}></i>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {/* Breakdown */}
+
+                {/* Bug Results */}
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-xs text-arena-muted">Bug Identified</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-1.5 bg-arena-border rounded-full"><div className="h-1.5 bg-arena-green rounded-full" style={{ width: '100%' }}></div></div>
-                      <span className="font-mono text-xs text-arena-green">+80pts</span>
+                  {showScore.bugsFound?.length > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono text-xs text-arena-muted">Bugs Found</span>
+                      <span className="font-mono text-xs text-arena-green font-bold">{showScore.bugsFound.length} 🎯</span>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-xs text-arena-muted">Explanation Quality</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-1.5 bg-arena-border rounded-full"><div className="h-1.5 bg-arena-green rounded-full" style={{ width: '85%' }}></div></div>
-                      <span className="font-mono text-xs text-arena-green">+68pts</span>
+                  )}
+                  {showScore.bugsPartial?.length > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono text-xs text-arena-muted">Partial Matches</span>
+                      <span className="font-mono text-xs text-yellow-400 font-bold">{showScore.bugsPartial.length} ⚠️</span>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-xs text-arena-muted">Speed Bonus</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-1.5 bg-arena-border rounded-full"><div className="h-1.5 bg-yellow-400 rounded-full" style={{ width: '60%' }}></div></div>
-                      <span className="font-mono text-xs text-yellow-400">+36pts</span>
+                  )}
+                  {showScore.bugsMissed?.length > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono text-xs text-arena-muted">Missed</span>
+                      <span className="font-mono text-xs text-red-400 font-bold">{showScore.bugsMissed.length} ✗</span>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-xs text-arena-muted">Hint Penalty</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-1.5 bg-arena-border rounded-full"><div className="h-1.5 bg-red-500 rounded-full" style={{ width: '25%' }}></div></div>
-                      <span className="font-mono text-xs text-red-400">-50pts</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
+
                 {/* AI feedback */}
                 <div className="bg-arena-purple/10 border border-arena-purple/30 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
@@ -181,11 +179,33 @@ export default function AnswerPanel() {
                     <span className="font-mono text-xs font-bold text-arena-purpleLight">AI Feedback</span>
                   </div>
                   <p className="font-mono text-xs text-arena-muted leading-relaxed">
-                    Correct! The off-by-one error in the inner loop causes an <span className="text-white">IndexError</span>. 
-                    Your fix using <span className="text-arena-green">n-i-1</span> is optimal — it also improves performance by skipping already-sorted elements. Great work!
+                    {showScore.feedback || 'Your answer has been scored. Review the results above.'}
                   </p>
                 </div>
+
+                {/* Ready button */}
+                {!allSubmitted && (
+                  <button
+                    onClick={handleReady}
+                    className="w-full bg-arena-green/10 border border-arena-green/30 rounded-lg py-2.5 font-mono text-sm text-arena-green font-bold hover:bg-arena-green/20 transition-all cursor-pointer"
+                  >
+                    <i className="fa-solid fa-check mr-2"></i> Ready for Next Round
+                  </button>
+                )}
+
+                {allSubmitted && (
+                  <div className="text-center py-2">
+                    <p className="font-mono text-xs text-arena-green animate-pulse">
+                      <i className="fa-solid fa-clock mr-1"></i> All players submitted — waiting for next round...
+                    </p>
+                  </div>
+                )}
               </>
+            ) : (
+              <div className="text-center py-8">
+                <i className="fa-solid fa-spinner fa-spin text-2xl text-arena-green mb-3"></i>
+                <p className="font-mono text-sm text-arena-muted">Scoring in progress...</p>
+              </div>
             )}
           </div>
         )}
