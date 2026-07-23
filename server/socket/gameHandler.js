@@ -312,6 +312,9 @@ function setupGameHandlers(game) {
           game.to(roomCode).emit("game:round-end", {
             round: roomState.currentRound,
           });
+
+          // Auto-advance after 3s (client may not send game:ready)
+          setTimeout(() => advanceToNextRound(game, roomCode, roomState), 3000);
         }
       } catch (err) {
         console.error("game:submit error:", err);
@@ -496,6 +499,9 @@ async function advanceToNextRound(game, roomCode, roomState) {
       game.to(roomCode).emit("game:round-end", {
         round: roomState.currentRound,
       });
+
+      // Auto-advance after 3s (client may not send game:ready)
+      setTimeout(() => advanceToNextRound(game, roomCode, roomState), 3000);
     }
   }, roomState.roundDuration * 1000);
 }
