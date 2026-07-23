@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { useRoom } from '../context/RoomContext'
 import { useAuthContext } from '../context/AuthContext'
@@ -19,17 +19,26 @@ export default function ArenaLobbyPage() {
   const navigate = useNavigate()
   const toast = useToast()
 
+  // Track gameState in a ref so cleanup has current value
+  const gameStateRef = useRef(gameState)
+  useEffect(() => {
+    gameStateRef.current = gameState
+  }, [gameState])
+
   useEffect(() => {
     if (!currentRoom || currentRoom.code !== code) {
       fetchRoom(code)
     }
   }, [code, currentRoom, fetchRoom])
 
-  // Connect to socket when room loads
+  // Connect to socket when room loads — keep alive during lobby→game transition
   useEffect(() => {
     if (!code) return
     const cleanup = connect(code)
     return () => {
+      // Don't disconnect if transitioning to game (game:started received)
+      if (gameStateRef.current === 'playing') return
+
       if (cleanup && typeof cleanup === 'function') {
         cleanup()
       }

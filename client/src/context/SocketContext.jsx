@@ -23,6 +23,7 @@ export function SocketProvider({ children }) {
   const [lastScore, setLastScore] = useState(null) // for toast notification
 
   const socketRef = useRef(null)
+  const currentRoomRef = useRef(null)
   const timerRef = useRef(null)
 
   const clearTimer = useCallback(() => {
@@ -35,6 +36,11 @@ export function SocketProvider({ children }) {
   const connect = useCallback((roomCode) => {
     if (!isAuthenticated || !user) return
 
+    // Idempotency guard: if already connected to this room, no-op
+    if (currentRoomRef.current === roomCode && socketRef.current?.connected) {
+      return () => {} // no-op cleanup
+    }
+
     const socketUrl = import.meta.env.VITE_SOCKET_URL || window.location.origin
     const socket = io(`${socketUrl}/game`, {
       auth: { token },
@@ -43,6 +49,7 @@ export function SocketProvider({ children }) {
     })
 
     socketRef.current = socket
+    currentRoomRef.current = roomCode
 
     socket.on('connect', () => {
       setIsConnected(true)
@@ -127,6 +134,7 @@ export function SocketProvider({ children }) {
       socket.off()
       socket.disconnect()
       socketRef.current = null
+      currentRoomRef.current = null
     }
   }, [isAuthenticated, user, clearTimer])
 
@@ -157,6 +165,7 @@ export function SocketProvider({ children }) {
       socketRef.current.disconnect()
       socketRef.current = null
     }
+    currentRoomRef.current = null
     setIsConnected(false)
     setGameState('idle')
     setCurrentRound(0)
