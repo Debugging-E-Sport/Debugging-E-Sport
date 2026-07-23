@@ -151,9 +151,16 @@ function setupGameHandlers(game) {
 
         console.log(`${socket.user.username} joined room ${roomCode}`);
 
+        // Build players list for the emit
+        const playersList = [];
+        for (const [, player] of roomState.players) {
+          playersList.push({ id: player.userId, username: player.username });
+        }
+
         game.to(roomCode).emit("game:player-joined", {
           username: socket.user.username,
           playerCount: roomState.players.size,
+          players: playersList,
         });
       } catch (err) {
         console.error("game:join error:", err);

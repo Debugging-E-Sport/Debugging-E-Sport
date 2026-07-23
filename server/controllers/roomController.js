@@ -73,6 +73,12 @@ class RoomController {
         ],
       });
 
+      // Emit real-time player-joined to all connected clients in the room
+      const io = req.app.get("io");
+      if (io) {
+        io.to(code).emit("game:player-joined", { players: updatedRoom.players });
+      }
+
       res.status(200).json({
         room_id: updatedRoom.id,
         code: updatedRoom.code,
