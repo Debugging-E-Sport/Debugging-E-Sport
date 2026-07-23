@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import AnswerPanel from '../../components/Game/AnswerPanel'
+import { ToastProvider } from '../../context/ToastContext'
 
 // Mock SocketContext
 const mockUseSocket = vi.fn()
@@ -18,6 +19,17 @@ vi.mock('react-router', async () => {
     useParams: () => ({ code: 'TEST123' }),
   }
 })
+
+// Test wrapper with required providers
+function Wrapper({ children }) {
+  return (
+    <ToastProvider>
+      <MemoryRouter>
+        {children}
+      </MemoryRouter>
+    </ToastProvider>
+  )
+}
 
 describe('AnswerPanel', () => {
   const mockSubmitAnswer = vi.fn()
@@ -44,22 +56,14 @@ describe('AnswerPanel', () => {
 
   describe('rendering', () => {
     it('should render the answer panel with tabs', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       expect(screen.getByText('Your Answer')).toBeInTheDocument()
       expect(screen.getByText('AI Analysis')).toBeInTheDocument()
     })
 
     it('should render bug type dropdown', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       expect(screen.getByText('Select bug type...')).toBeInTheDocument()
       expect(screen.getByText('Logic error')).toBeInTheDocument()
@@ -67,11 +71,7 @@ describe('AnswerPanel', () => {
     })
 
     it('should render explanation textarea', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       expect(
         screen.getByPlaceholderText(/Describe the bug you found/)
@@ -79,11 +79,7 @@ describe('AnswerPanel', () => {
     })
 
     it('should render submit button', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       expect(screen.getByText('SUBMIT ANSWER')).toBeInTheDocument()
     })
@@ -91,11 +87,7 @@ describe('AnswerPanel', () => {
 
   describe('submit flow', () => {
     it('should have submit button disabled when no explanation', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const submitBtn = screen.getByText('SUBMIT ANSWER').closest('button')
       expect(submitBtn).toBeDisabled()
@@ -107,11 +99,7 @@ describe('AnswerPanel', () => {
         currentSnippet: null,
       })
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const submitBtn = screen.getByText('SUBMIT ANSWER').closest('button')
       expect(submitBtn).toBeDisabled()
@@ -120,11 +108,7 @@ describe('AnswerPanel', () => {
     it('should enable submit button when explanation is entered', async () => {
       const user = userEvent.setup()
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const textarea = screen.getByPlaceholderText(/Describe the bug you found/)
       await user.type(textarea, 'There is an off-by-one error in the loop.')
@@ -136,11 +120,7 @@ describe('AnswerPanel', () => {
     it('should call submitAnswer on form submit', async () => {
       const user = userEvent.setup()
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const textarea = screen.getByPlaceholderText(/Describe the bug you found/)
       await user.type(textarea, 'The loop condition should be < not <=')
@@ -157,11 +137,7 @@ describe('AnswerPanel', () => {
     it('should not submit if textarea has only whitespace', async () => {
       const user = userEvent.setup()
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const textarea = screen.getByPlaceholderText(/Describe the bug you found/)
       await user.type(textarea, '   ')
@@ -174,11 +150,7 @@ describe('AnswerPanel', () => {
     it('should prevent double submission while submitting', async () => {
       const user = userEvent.setup()
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const textarea = screen.getByPlaceholderText(/Describe the bug you found/)
       await user.type(textarea, 'Found a bug')
@@ -195,11 +167,7 @@ describe('AnswerPanel', () => {
     it('should allow selecting a bug type', async () => {
       const user = userEvent.setup()
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       const select = screen.getByRole('combobox')
       await user.selectOptions(select, 'Logic error')
@@ -212,11 +180,7 @@ describe('AnswerPanel', () => {
     it('should show AI Analysis tab when clicked', async () => {
       const user = userEvent.setup()
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       await user.click(screen.getByText('AI Analysis'))
 
@@ -227,11 +191,7 @@ describe('AnswerPanel', () => {
     })
 
     it('should show Answer tab content by default', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       expect(screen.getByText('// bug type')).toBeInTheDocument()
       expect(screen.getByText('// explain the bug')).toBeInTheDocument()
@@ -240,11 +200,7 @@ describe('AnswerPanel', () => {
 
   describe('score display', () => {
     it('should show AI Analysis prompt when not submitted', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       fireEvent.click(screen.getByText('AI Analysis'))
 
@@ -254,11 +210,7 @@ describe('AnswerPanel', () => {
     })
 
     it('should show scoring in progress when submitted but no score yet', () => {
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       // The AI Analysis tab should show "Submit your answer" when not submitted
       fireEvent.click(screen.getByText('AI Analysis'))
@@ -285,11 +237,7 @@ describe('AnswerPanel', () => {
         },
       })
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       // Submit the form first to set hasSubmitted
       const textarea = screen.getByPlaceholderText(/Describe the bug you found/)
@@ -316,11 +264,7 @@ describe('AnswerPanel', () => {
         lastScore: { score: 80, maxScore: 100, bugsFound: [], bugsPartial: [], bugsMissed: [], feedback: 'ok' },
       })
 
-      render(
-        <MemoryRouter>
-          <AnswerPanel />
-        </MemoryRouter>
-      )
+      render(<AnswerPanel />, { wrapper: Wrapper })
 
       // Submit then check prepare-ready button is absent
       // Switch to explain tab
