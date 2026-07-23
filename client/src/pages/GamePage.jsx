@@ -21,6 +21,9 @@ export default function GamePage() {
       return
     }
 
+    // If connection was preserved from lobby, skip reconnecting
+    if (isConnected) return
+
     const cleanup = connect(roomCode)
 
     return () => {
@@ -28,7 +31,7 @@ export default function GamePage() {
         cleanup()
       }
     }
-  }, [roomCode, isAuthenticated])
+  }, [roomCode, isAuthenticated, isConnected])
 
   useEffect(() => {
     if (gameState === 'over') {
