@@ -8,6 +8,7 @@ import MockStatusPage from './pages/MockStatusPage.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { RoomProvider } from './context/RoomContext'
 import { SocketProvider } from './context/SocketContext'
+import { ToastProvider } from './context/ToastContext'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 function App() {
@@ -15,25 +16,27 @@ function App() {
 
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <RoomProvider>
-          <SocketProvider>
-            <div className="min-h-screen bg-arena-bg text-arena-text flex flex-col">
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/select/role" element={<ProtectedRoute><SelectRolePage /></ProtectedRoute>} />
-                <Route path="/room/:code" element={<ProtectedRoute><ArenaLobbyPage /></ProtectedRoute>} />
-                <Route path="/game/:code" element={<ProtectedRoute><GamePage /></ProtectedRoute>} />
-                <Route path="/game/:code/over" element={<ProtectedRoute><GameOverPage /></ProtectedRoute>} />
-                {isMockEnv && (
-                  <Route path="/dev/mock-status" element={<MockStatusPage />} />
-                )}
-                <Route path="*" element={<Navigate to="/login" replace />} />
-              </Routes>
-            </div>
-          </SocketProvider>
-        </RoomProvider>
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <RoomProvider>
+            <SocketProvider>
+              <div className="min-h-screen bg-arena-bg text-arena-text flex flex-col">
+                <Routes>
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/select/role" element={<ProtectedRoute><SelectRolePage /></ProtectedRoute>} />
+                  <Route path="/room/:code" element={<ProtectedRoute><ArenaLobbyPage /></ProtectedRoute>} />
+                  <Route path="/game/:code" element={<ProtectedRoute><GamePage /></ProtectedRoute>} />
+                  <Route path="/game/:code/over" element={<ProtectedRoute><GameOverPage /></ProtectedRoute>} />
+                  {isMockEnv && (
+                    <Route path="/dev/mock-status" element={<MockStatusPage />} />
+                  )}
+                  <Route path="*" element={<Navigate to="/login" replace />} />
+                </Routes>
+              </div>
+            </SocketProvider>
+          </RoomProvider>
+        </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   )
 }

@@ -1,10 +1,32 @@
 import { useSocket } from '../../context/SocketContext'
+import LoadingSkeleton from '../LoadingSkeleton'
 
 const placeholderCode = '// Waiting for the next snippet...\n// The room host will start the game soon.\n\nfunction loading() {\n  return "Stay sharp, debugger! ⚡"\n}'
 
 export default function CodeSnippetPanel() {
-  const { currentSnippet } = useSocket()
+  const { currentSnippet, gameState, isConnected } = useSocket()
 
+  // Between rounds — show skeleton
+  if (gameState === 'playing' && !currentSnippet) {
+    return (
+      <section id="code-panel" className="space-y-4">
+        <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 rounded-full bg-arena-green/20 flex items-center justify-center">
+              <i className="fa-solid fa-spinner fa-spin text-xs text-arena-green"></i>
+            </div>
+            <div>
+              <p className="font-mono text-sm font-bold text-white">Waiting for next round...</p>
+              <p className="text-arena-muted text-xs mt-0.5">The next snippet will appear shortly.</p>
+            </div>
+          </div>
+        </div>
+        <LoadingSkeleton variant="code" count={8} />
+      </section>
+    )
+  }
+
+  // Empty / waiting for game to start
   if (!currentSnippet) {
     return (
       <section id="code-panel" className="space-y-4">
@@ -50,7 +72,7 @@ export default function CodeSnippetPanel() {
   return (
     <section id="code-panel" className="space-y-4">
       {/* Question header */}
-      <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
+      <div className="bg-arena-panel border border-arena-border rounded-xl p-4 glow-green/20">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 mb-1">

@@ -4,26 +4,42 @@ import AnswerPanel from './AnswerPanel'
 import LiveLeaderboard from './LiveLeaderboard'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { useSocket } from '../../context/SocketContext'
+import LoadingSkeleton from '../LoadingSkeleton'
 
 export default function GameView({ roomCode, user }) {
-  const { gameState, lastScore, dismissScoreToast } = useSocket()
+  const { gameState, lastScore, dismissScoreToast, isConnected } = useSocket()
+
+  // Between-rounds waiting state
+  if (gameState === 'playing' && !lastScore && isConnected) {
+    // This is essentially the idle-between-rounds state
+  }
 
   return (
     <div className="text-arena-text min-h-screen grid-bg flex flex-col">
       <GameHeader roomCode={roomCode} user={user} />
       
-      <main className="max-w-[1440px] w-full mx-auto px-6 py-8 flex-1">
+      {/* Connection warning banner */}
+      {!isConnected && (
+        <div className="bg-red-500/10 border-b border-red-500/30 px-4 py-2 text-center">
+          <p className="font-mono text-xs text-red-400">
+            <i className="fa-solid fa-plug-circle-xmark mr-1.5"></i>
+            Disconnected from server. Reconnecting...
+          </p>
+        </div>
+      )}
+
+      <main className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1">
         <ErrorBoundary>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
             {/* LEFT COLUMN: Game Area */}
-            <div className="lg:col-span-8 flex flex-col gap-6 animate-[slideInUp_0.5s_ease-out]">
+            <div className="lg:col-span-8 flex flex-col gap-4 sm:gap-6 animate-[slideInUp_0.5s_ease-out]">
               <CodeSnippetPanel />
               <AnswerPanel />
             </div>
 
             {/* RIGHT COLUMN: Leaderboard & Stats */}
             <div className="lg:col-span-4 relative">
-              <div className="flex flex-col gap-6 animate-[slideInRight_0.6s_ease-out] sticky top-8">
+              <div className="flex flex-col gap-4 sm:gap-6 animate-[slideInRight_0.6s_ease-out] lg:sticky lg:top-8">
                 <LiveLeaderboard />
               </div>
             </div>

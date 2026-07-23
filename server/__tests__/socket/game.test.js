@@ -1,12 +1,20 @@
 const { io: Client } = require("socket.io-client")
 const app = require("../../app")
 const { setupDB, teardownDB } = require("../helpers/db")
+const request = require("supertest")
+const { signToken } = require("../../helpers/jwt")
 
 const httpServer = app.server
 let httpServerAddr = null
 
 beforeAll(async () => {
   await setupDB()
+
+  // Register a test user for socket auth
+  await request(app)
+    .post("/api/auth/register")
+    .send({ username: "socket_tester", password: "pass123" })
+
   await new Promise((resolve) => {
     httpServer.listen(() => {
       const { port } = httpServer.address()
@@ -16,11 +24,24 @@ beforeAll(async () => {
   })
 })
 
+afterAll(async () => {
+  await new Promise((resolve) => {
+    const t = setTimeout(() => resolve(), 2000)
+    httpServer.close(() => {
+      clearTimeout(t)
+      resolve()
+    })
+  })
+  await teardownDB()
+}, 20000)
+
 describe("Socket.IO — /game namespace", () => {
-  test("client connects to /game namespace", (done) => {
+  test("client connects to /game namespace with auth token", (done) => {
+    const token = signToken({ id: 1, username: "socket_tester" })
     const socket = Client(`${httpServerAddr}/game`, {
       transports: ["websocket"],
       timeout: 5000,
+      auth: { token },
     })
 
     socket.on("connect", () => {
@@ -35,9 +56,11 @@ describe("Socket.IO — /game namespace", () => {
   })
 
   test("client can join a room via game:join", (done) => {
+    const token = signToken({ id: 1, username: "socket_tester" })
     const socket = Client(`${httpServerAddr}/game`, {
       transports: ["websocket"],
       timeout: 5000,
+      auth: { token },
     })
 
     socket.on("connect", () => {
@@ -52,7 +75,6 @@ describe("Socket.IO — /game namespace", () => {
   })
 
   test("client receives game:started broadcast after starting room via REST", (done) => {
-    const request = require("supertest")
     let roomCode = null
 
     setTimeout(async () => {
@@ -69,6 +91,7 @@ describe("Socket.IO — /game namespace", () => {
       const socket = Client(`${httpServerAddr}/game`, {
         transports: ["websocket"],
         timeout: 5000,
+        auth: { token },
       })
 
       socket.on("connect", () => {

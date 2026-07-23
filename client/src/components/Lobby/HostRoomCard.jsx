@@ -1,7 +1,18 @@
 import { useRoom } from '../../context/RoomContext'
+import { useToast } from '../../context/ToastContext'
 
 export default function HostRoomCard() {
   const { createRoom, isLoading } = useRoom()
+  const toast = useToast()
+
+  const handleCreateRoom = async () => {
+    try {
+      await createRoom()
+    } catch {
+      // Error handled by RoomContext, but toast for visibility
+      toast.error('Failed to create room. Please try again.')
+    }
+  }
 
   return (
     <div className="bg-arena-panel border border-arena-purple/30 rounded-xl p-5 glow-purple flex flex-col h-full">
@@ -20,16 +31,21 @@ export default function HostRoomCard() {
       </div>
 
       <button 
-        onClick={createRoom}
+        onClick={handleCreateRoom}
         disabled={isLoading}
-        className="w-full bg-arena-purple hover:bg-arena-purpleLight text-white font-mono font-bold text-sm py-3 rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-arena-purple hover:bg-arena-purpleLight text-white font-mono font-bold text-sm py-3 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]"
       >
         {isLoading ? (
-          <i className="fa-solid fa-spinner fa-spin text-xs"></i>
+          <>
+            <i className="fa-solid fa-spinner fa-spin text-xs"></i>
+            CREATING...
+          </>
         ) : (
-          <i className="fa-solid fa-plus text-xs"></i>
+          <>
+            <i className="fa-solid fa-plus text-xs"></i>
+            CREATE ARENA
+          </>
         )}
-        {isLoading ? 'CREATING...' : 'CREATE ARENA'}
       </button>
     </div>
   )

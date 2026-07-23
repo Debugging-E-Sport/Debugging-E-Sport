@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { useSocket } from '../context/SocketContext'
 import { useAuthContext } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import Spinner from '../components/Spinner'
 import GameView from '../components/Game/GameView'
 
@@ -10,6 +11,7 @@ export default function GamePage() {
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuthContext()
   const { connect, leaveGame, gameState, isConnected } = useSocket()
+  const toast = useToast()
 
   useEffect(() => {
     if (!isAuthenticated || !roomCode) {
@@ -49,7 +51,7 @@ export default function GamePage() {
     <div className="min-h-screen bg-arena-bg">
       {/* Connection status banner */}
       {!isConnected && gameState !== 'idle' && (
-        <div className="bg-red-500/10 border-b border-red-500/30 px-4 py-2 text-center">
+        <div className="disconnect-banner bg-red-500/10 border-b border-red-500/30 px-4 py-2 text-center">
           <p className="font-mono text-xs text-red-400">
             <i className="fa-solid fa-plug-circle-xmark mr-1.5"></i>
             Disconnected from server. Trying to reconnect...
@@ -57,7 +59,7 @@ export default function GamePage() {
         </div>
       )}
 
-      {/* Waiting state */}
+      {/* Waiting / Connecting state */}
       {gameState === 'idle' && (
         <div className="flex flex-col items-center justify-center min-h-screen gap-6 px-4">
           <div className="text-center">
@@ -71,7 +73,7 @@ export default function GamePage() {
           </div>
           <button
             onClick={handleLeave}
-            className="font-mono text-sm text-arena-muted hover:text-white border border-arena-border rounded-lg px-6 py-2.5 transition-all cursor-pointer"
+            className="font-mono text-sm text-arena-muted hover:text-white border border-arena-border rounded-lg px-6 py-2.5 transition-all cursor-pointer hover:border-arena-green/50"
           >
             <i className="fa-solid fa-arrow-left mr-2"></i> Back to Lobby
           </button>
@@ -81,13 +83,6 @@ export default function GamePage() {
       {/* Connected / Playing */}
       {(gameState === 'waiting' || gameState === 'playing') && (
         <GameView roomCode={roomCode} user={user} />
-      )}
-
-      {/* Still connecting */}
-      {gameState === 'idle' && !isConnected && (
-        <div className="flex items-center justify-center min-h-screen">
-          <Spinner />
-        </div>
       )}
     </div>
   )
