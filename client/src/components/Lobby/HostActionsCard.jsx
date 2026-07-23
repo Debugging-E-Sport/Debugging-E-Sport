@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { useRoom } from '../../context/RoomContext'
 import { api } from '../../api/client'
 
-export default function HostActionsCard({ roomCode }) {
+export default function HostActionsCard({ roomCode, players = [] }) {
   const { currentRoom } = useRoom()
   const navigate = useNavigate()
   const [isStarting, setIsStarting] = useState(false)
@@ -12,7 +12,6 @@ export default function HostActionsCard({ roomCode }) {
     setIsStarting(true)
     try {
       await api.post(`/rooms/${roomCode}/start`)
-      // Navigate to game page - connect to socket there
       navigate(`/game/${roomCode}`, { replace: true })
     } catch (err) {
       console.error('Failed to start game:', err)
@@ -21,7 +20,7 @@ export default function HostActionsCard({ roomCode }) {
     }
   }
 
-  const playerCount = currentRoom?.players?.length || 0
+  const playerCount = players.length || currentRoom?.players?.length || 0
 
   return (
     <>
