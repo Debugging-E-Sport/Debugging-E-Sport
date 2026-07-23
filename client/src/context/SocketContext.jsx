@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react'
 import { io } from 'socket.io-client'
 import { useAuthContext } from './AuthContext'
+import { useToast } from './ToastContext'
 
 const SocketContext = createContext(null)
 
 export function SocketProvider({ children }) {
   const { user, isAuthenticated } = useAuthContext()
+  const toast = useToast()
   const [isConnected, setIsConnected] = useState(false)
   const [gameState, setGameState] = useState('idle') // idle, waiting, playing, over
   const [currentRound, setCurrentRound] = useState(0)
@@ -53,6 +55,7 @@ export function SocketProvider({ children }) {
 
     socket.on('connect_error', (err) => {
       console.error('Socket connection error:', err.message)
+      toast.error('Connection lost. Trying to reconnect...')
       setIsConnected(false)
     })
 
