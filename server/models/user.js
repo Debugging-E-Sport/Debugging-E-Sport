@@ -27,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: { msg: "username is required" },
           len: {
-            args: [6, 30],
-            msg: "username must be more than 5 characters",
+            args: [4, 30],
+            msg: "username must be at least 4 characters",
           },
         },
       },

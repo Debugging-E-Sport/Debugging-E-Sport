@@ -1,16 +1,13 @@
 import { useRoom } from '../../context/RoomContext'
-import { useToast } from '../../context/ToastContext'
 
 export default function HostRoomCard() {
-  const { createRoom, isLoading } = useRoom()
-  const toast = useToast()
+  const { createRoom, isLoading, error } = useRoom()
 
   const handleCreateRoom = async () => {
     try {
       await createRoom()
     } catch {
-      // Error handled by RoomContext, but toast for visibility
-      toast.error('Failed to create room. Please try again.')
+      // Error is set in RoomContext — toast the actual message
     }
   }
 

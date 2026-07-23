@@ -31,7 +31,9 @@ export function AuthProvider({ children }) {
       saveAuth({ id: res.data.id, username: res.data.username }, res.data.token)
       return true
     } catch (err) {
-      const msg = err.response?.data?.error || 'Login failed. Check your credentials.'
+      const msg =
+        err.response?.data?.message ||
+        (err.response ? 'Login failed. Check your credentials.' : 'Cannot reach server. Check your connection.')
       setError(msg)
       return false
     } finally {
@@ -46,7 +48,9 @@ export function AuthProvider({ children }) {
       await api.post('/auth/register', { username, password })
       return true
     } catch (err) {
-      const msg = err.response?.data?.error || 'Registration failed.'
+      const msg =
+        err.response?.data?.message ||
+        (err.response ? 'Registration failed.' : 'Cannot reach server. Check your connection.')
       setError(msg)
       return false
     } finally {

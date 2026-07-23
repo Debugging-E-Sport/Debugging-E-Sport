@@ -18,6 +18,14 @@ export default function LoginForm({ onSubmit, isLoading, error }) {
       <h2 className="font-mono text-xl font-bold text-white mb-7">
         Welcome back, debugger
       </h2>
+
+      {hasError && (
+        <div className="mb-5 font-mono text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded-lg px-4 py-3 flex items-start gap-2">
+          <i className="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+          <p>{error}</p>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block font-mono text-xs text-[#00ff41] mb-1.5">

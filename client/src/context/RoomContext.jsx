@@ -18,7 +18,7 @@ export function RoomProvider({ children }) {
       setCurrentRoom(res.data)
       navigate(`/room/${res.data.code}`)
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create room')
+      setError(err.response?.data?.message || 'Failed to create room')
     } finally {
       setIsLoading(false)
     }
@@ -33,7 +33,7 @@ export function RoomProvider({ children }) {
       setCurrentRoom(res.data)
       navigate(`/room/${code}`)
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to join room')
+      setError(err.response?.data?.message || 'Failed to join room')
     } finally {
       setIsLoading(false)
     }
@@ -46,7 +46,7 @@ export function RoomProvider({ children }) {
       const res = await api.get(`/rooms/${code}`)
       setCurrentRoom(res.data)
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to fetch room')
+      setError(err.response?.data?.message || 'Failed to fetch room')
       navigate('/select/role') // redirect if room not found
     } finally {
       setIsLoading(false)
