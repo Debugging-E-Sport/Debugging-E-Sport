@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useSocket } from '../../context/SocketContext'
 import { useToast } from '../../context/ToastContext'
@@ -15,6 +15,18 @@ export default function AnswerPanel() {
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [myScore, setMyScore] = useState(null)
   const [aiError, setAiError] = useState(false)
+
+  // Reset form when new snippet arrives (next round)
+  useEffect(() => {
+    if (currentSnippet?.id) {
+      setHasSubmitted(false)
+      setExplanation('')
+      setBugType('')
+      setMyScore(null)
+      setAiError(false)
+      setIsSubmitting(false)
+    }
+  }, [currentSnippet?.id])
 
   const handleSubmit = (e) => {
     e.preventDefault()
