@@ -22,6 +22,8 @@ describe('LiveLeaderboard', () => {
       allSubmitted: false,
       scores: {},
       players: [],
+      gameState: 'playing',
+      isConnected: true,
     })
     mockUseAuthContext.mockReturnValue({
       user: { id: '1', username: 'player1' },
@@ -32,7 +34,7 @@ describe('LiveLeaderboard', () => {
     it('should render waiting message when leaderboard is empty', () => {
       render(<LiveLeaderboard />)
 
-      expect(screen.getByText('Waiting for scores...')).toBeInTheDocument()
+      expect(screen.getByText('No scores yet')).toBeInTheDocument()
       expect(
         screen.getByText('Leaderboard updates after each round.')
       ).toBeInTheDocument()
@@ -47,7 +49,8 @@ describe('LiveLeaderboard', () => {
     it('should not render players online section when no players', () => {
       render(<LiveLeaderboard />)
 
-      expect(screen.queryByText('Players Online')).not.toBeInTheDocument()
+      // Players Online section now shows even when empty — with "Waiting for players..." text
+      expect(screen.getByText('Waiting for players to connect...')).toBeInTheDocument()
     })
   })
 
@@ -66,6 +69,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -83,6 +88,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -102,6 +109,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -116,6 +125,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -131,6 +142,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -145,6 +158,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -159,6 +174,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -178,6 +195,8 @@ describe('LiveLeaderboard', () => {
           { username: 'player2' },
           { username: 'player3' },
         ],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -202,6 +221,8 @@ describe('LiveLeaderboard', () => {
           { username: 'player1' },
           { username: 'player2' },
         ],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
@@ -215,6 +236,8 @@ describe('LiveLeaderboard', () => {
         allSubmitted: false,
         scores: {},
         players: [{ username: 'p1' }],
+        gameState: 'playing',
+        isConnected: true,
       })
 
       render(<LiveLeaderboard />)
