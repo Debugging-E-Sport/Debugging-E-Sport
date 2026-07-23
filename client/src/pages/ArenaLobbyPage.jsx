@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { useRoom } from '../context/RoomContext'
 import { useAuthContext } from '../context/AuthContext'
 import { useSocket } from '../context/SocketContext'
@@ -15,7 +15,8 @@ export default function ArenaLobbyPage() {
   const { code } = useParams()
   const { currentRoom, fetchRoom, isLoading, error } = useRoom()
   const { user } = useAuthContext()
-  const { connect, players, isConnected, leaveGame } = useSocket()
+  const { connect, players, isConnected, gameState, leaveGame } = useSocket()
+  const navigate = useNavigate()
   const toast = useToast()
 
   useEffect(() => {
@@ -81,6 +82,13 @@ export default function ArenaLobbyPage() {
     )
   }
 
+  // Navigate to game when host starts
+  useEffect(() => {
+    if (gameState === 'playing' && code) {
+      navigate(`/game/${code}`, { replace: true })
+    }
+  }, [gameState, code, navigate])
+
   if (!currentRoom) return null
 
   const isHost = user?.id === currentRoom.host_id
@@ -108,7 +116,7 @@ export default function ArenaLobbyPage() {
           {/* RIGHT SIDEBAR (col 4) */}
           <div className="col-span-12 lg:col-span-4 space-y-4 sm:space-y-5">
             <GameSummaryCard />
-            <HostActionsCard roomCode={currentRoom.code} />
+            <HostActionsCard roomCode={currentRoom.code} players={players} />
           </div>
         </div>
       </main>
