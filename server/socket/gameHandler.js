@@ -312,6 +312,9 @@ function setupGameHandlers(game) {
           game.to(roomCode).emit("game:round-end", {
             round: roomState.currentRound,
           });
+
+          // Auto-advance after 3s (client may not send game:ready)
+          setTimeout(() => advanceToNextRound(game, roomCode, roomState), 3000);
         }
       } catch (err) {
         console.error("game:submit error:", err);
@@ -347,7 +350,7 @@ function setupGameHandlers(game) {
     });
 
     // ── disconnect ─────────────────────────────────────────────────────
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log(`🔌 Game socket disconnected: ${socket.id} (${socket.user?.username})`);
       const roomCode = socket._roomCode;
       if (!roomCode) return;
@@ -360,6 +363,23 @@ function setupGameHandlers(game) {
       roomState.roundReady.delete(socket.id);
 
       const playerCount = roomState.players.size;
+
+      // If host disconnected during game, end game for everyone
+      if (roomState.currentRound > 0) {
+        const room = await Room.findOne({ where: { code: roomCode } })
+        if (room && room.hostId === socket.user?.id) {
+          clearRoomTimer(roomState)
+          game.to(roomCode).emit("game:over", {
+            winner: null,
+            finalLeaderboard: buildLeaderboard(roomState),
+            reason: "Host left the game",
+          })
+          await Room.update({ status: "finished" }, { where: { code: roomCode } })
+          gameRooms.delete(roomCode)
+          console.log(`🚪 Host left — game ended in ${roomCode}`)
+          return
+        }
+      }
 
       game.to(roomCode).emit("game:player-left", {
         username: socket.user?.username || "Unknown",
@@ -496,6 +516,9 @@ async function advanceToNextRound(game, roomCode, roomState) {
       game.to(roomCode).emit("game:round-end", {
         round: roomState.currentRound,
       });
+
+      // Auto-advance after 3s (client may not send game:ready)
+      setTimeout(() => advanceToNextRound(game, roomCode, roomState), 3000);
     }
   }, roomState.roundDuration * 1000);
 }

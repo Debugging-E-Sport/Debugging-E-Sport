@@ -74,6 +74,7 @@ export function SocketProvider({ children }) {
 
     socket.on('game:player-left', (data) => {
       setPlayers((prev) => prev.filter((p) => p.username !== data.username))
+      toast.info(`${data.username} left the room`)
     })
 
     socket.on('game:started', (data) => {
