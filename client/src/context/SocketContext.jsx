@@ -6,7 +6,7 @@ import { useToast } from './ToastContext'
 const SocketContext = createContext(null)
 
 export function SocketProvider({ children }) {
-  const { user, isAuthenticated } = useAuthContext()
+  const { user, isAuthenticated, token } = useAuthContext()
   const toast = useToast()
   const [isConnected, setIsConnected] = useState(false)
   const [gameState, setGameState] = useState('idle') // idle, waiting, playing, over
@@ -37,6 +37,7 @@ export function SocketProvider({ children }) {
 
     const socketUrl = import.meta.env.VITE_SOCKET_URL || window.location.origin
     const socket = io(`${socketUrl}/game`, {
+      auth: { token },
       transports: ['websocket', 'polling'],
       autoConnect: true,
     })
