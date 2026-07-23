@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { useSocket } from '../../context/SocketContext'
+import { useToast } from '../../context/ToastContext'
 
 export default function AnswerPanel() {
   const { code: roomCode } = useParams()
-  const { currentSnippet, submitAnswer, signalReady, allSubmitted, lastScore, dismissScoreToast } = useSocket()
+  const { currentSnippet, submitAnswer, signalReady, allSubmitted, lastScore, dismissScoreToast, isConnected } = useSocket()
+  const toast = useToast()
 
   const [activeTab, setActiveTab] = useState('answer')
   const [explanation, setExplanation] = useState('')
@@ -12,21 +14,33 @@ export default function AnswerPanel() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [myScore, setMyScore] = useState(null)
+  const [aiError, setAiError] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!explanation.trim() || !currentSnippet?.id || isSubmitting) return
 
+    if (!isConnected) {
+      toast.warning('Not connected to server. Your answer may not be submitted.')
+    }
+
     setIsSubmitting(true)
+    setAiError(false)
 
-    submitAnswer(roomCode, currentSnippet.id, explanation.trim())
-    setHasSubmitted(true)
+    try {
+      submitAnswer(roomCode, currentSnippet.id, explanation.trim())
+      setHasSubmitted(true)
 
-    // Simulate a brief delay then switch to AI analysis
-    setTimeout(() => {
+      // Simulate a brief delay then switch to AI analysis
+      setTimeout(() => {
+        setIsSubmitting(false)
+        setActiveTab('explain')
+      }, 800)
+    } catch {
       setIsSubmitting(false)
-      setActiveTab('explain')
-    }, 800)
+      setAiError(true)
+      toast.error('Failed to submit answer. Please try again.')
+    }
   }
 
   const handleReady = () => {
@@ -35,12 +49,8 @@ export default function AnswerPanel() {
     setExplanation('')
     setBugType('')
     setMyScore(lastScore)
+    setAiError(false)
     dismissScoreToast()
-  }
-
-  // Reset on new snippet
-  if (currentSnippet && hasSubmitted && myScore?.snippetId !== currentSnippet.id) {
-    // New round - check if we need to reset (handled by useEffect in real impl)
   }
 
   const showScore = myScore || lastScore
@@ -105,6 +115,19 @@ export default function AnswerPanel() {
                 className="w-full bg-[#141414] border border-arena-border rounded-lg px-3 py-2.5 font-mono text-sm text-white placeholder-arena-muted focus:outline-none focus:border-arena-green focus:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all resize-none"
               />
             </div>
+
+            {/* AI error banner */}
+            {aiError && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 flex items-start gap-2">
+                <i className="fa-solid fa-robot text-red-400 mt-0.5"></i>
+                <div>
+                  <p className="font-mono text-xs font-bold text-red-400">AI Scoring Unavailable</p>
+                  <p className="font-mono text-xs text-red-400/70 mt-0.5">
+                    The scoring service is temporarily unavailable. Your answer has been submitted and will be scored when the service recovers.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Submit */}
             <button 

@@ -1,15 +1,10 @@
 import { useSocket } from '../../context/SocketContext'
 import { useAuthContext } from '../../context/AuthContext'
+import LoadingSkeleton from '../LoadingSkeleton'
 
 export default function LiveLeaderboard() {
-  const { leaderboard, allSubmitted, scores, players } = useSocket()
+  const { leaderboard, players, isConnected, gameState } = useSocket()
   const { user } = useAuthContext()
-
-  const rankClasses = {
-    1: 'rank-1',
-    2: 'rank-2',
-    3: 'rank-3',
-  }
 
   const rankEmoji = {
     1: '🥇',
@@ -18,6 +13,15 @@ export default function LiveLeaderboard() {
   }
 
   const avatarColors = ['#00ff41', '#7c3aed', '#facc15', '#f85149', '#58a6ff', '#f0883e']
+
+  // Loading: before game starts
+  if (gameState === 'idle' || !isConnected) {
+    return (
+      <section id="leaderboard-panel" className="space-y-6">
+        <LoadingSkeleton variant="leaderboard" count={3} />
+      </section>
+    )
+  }
 
   return (
     <section id="leaderboard-panel" className="space-y-6">
@@ -39,9 +43,13 @@ export default function LiveLeaderboard() {
 
         <div className="divide-y divide-arena-border" id="lb-list">
           {leaderboard.length === 0 ? (
-            <div className="px-4 py-8 text-center">
-              <p className="font-mono text-xs text-arena-muted">Waiting for scores...</p>
+            <div className="px-4 py-10 text-center">
+              <div className="w-12 h-12 rounded-full bg-arena-green/5 border border-arena-green/20 flex items-center justify-center mx-auto mb-3">
+                <i className="fa-solid fa-trophy text-xl text-arena-muted"></i>
+              </div>
+              <p className="font-mono text-sm text-arena-muted">No scores yet</p>
               <p className="font-mono text-xs text-arena-muted mt-1">Leaderboard updates after each round.</p>
+              <p className="font-mono text-xs text-arena-muted/60 mt-2">Be the first to submit an answer!</p>
             </div>
           ) : (
             leaderboard.map((entry, index) => {
@@ -52,7 +60,9 @@ export default function LiveLeaderboard() {
 
               return (
                 <div key={entry.username} className={`flex items-center gap-3 px-4 py-3 ${topBg} ${borderClass}`}>
-                  <span className={`font-mono text-sm font-bold ${rankClasses[rank] || 'text-arena-muted'} w-5 text-center`}>
+                  <span className={`font-mono text-sm font-bold w-5 text-center ${
+                    rank === 1 ? 'text-yellow-400' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-orange-400' : 'text-arena-muted'
+                  }`}>
                     {rank <= 3 ? rankEmoji[rank] : rank}
                   </span>
                   <div 
@@ -85,12 +95,16 @@ export default function LiveLeaderboard() {
       </div>
 
       {/* Players online */}
-      {players.length > 0 && (
-        <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-mono text-xs font-bold text-white">Players Online</span>
-            <span className="font-mono text-xs text-arena-green">{players.length} connected</span>
+      <div className="bg-arena-panel border border-arena-border rounded-xl p-4">
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-mono text-xs font-bold text-white">Players Online</span>
+          <span className="font-mono text-xs text-arena-green">{players.length} connected</span>
+        </div>
+        {players.length === 0 ? (
+          <div className="text-center py-4">
+            <p className="font-mono text-xs text-arena-muted">Waiting for players to connect...</p>
           </div>
+        ) : (
           <div className="space-y-2">
             {players.map((p) => {
               const isMe = p.username === user?.username
@@ -112,8 +126,8 @@ export default function LiveLeaderboard() {
               )
             })}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   )
 }
